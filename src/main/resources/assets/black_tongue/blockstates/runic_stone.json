@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "rune=blank": { "model": "black_tongue:block/runic_stone_blank" },
+    "rune=nesting": { "model": "black_tongue:block/runic_stone_nesting" },
+    "rune=moon_phase": { "model": "black_tongue:block/runic_stone_moon_phase" },
+    "rune=potency": { "model": "black_tongue:block/runic_stone_potency" }
+  }
+}

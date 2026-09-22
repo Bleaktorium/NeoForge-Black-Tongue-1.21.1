@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "black_tongue:block/runic_stone_potency"
+  }
+}

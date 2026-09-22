@@ -14,8 +14,8 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @Mod(value = Black_Tongue.MOD_ID, dist = Dist.CLIENT)
 // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
 @EventBusSubscriber(modid = Black_Tongue.MOD_ID, value = Dist.CLIENT)
-public class ExampleModClient {
-    public ExampleModClient(ModContainer container) {
+public class Black_Tongue_Client {
+    public Black_Tongue_Client(ModContainer container) {
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
         // Do not forget to add translations for your config options to the en_us.json file.

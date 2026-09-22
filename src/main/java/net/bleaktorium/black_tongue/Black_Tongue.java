@@ -1,5 +1,11 @@
 package net.bleaktorium.black_tongue;
 
+import net.bleaktorium.black_tongue.block.ModBlocks;
+import net.bleaktorium.black_tongue.block.entity.ModBlockEntities;
+import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
+import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
+import net.bleaktorium.black_tongue.item.ModCreativeModeTabs;
+import net.bleaktorium.black_tongue.item.ModItems;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,6 +36,12 @@ public class Black_Tongue {
 
         modEventBus.addListener(this::commonSetup);
         NeoForge.EVENT_BUS.register(this);
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
+        ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
+        CauldronIngredients.bootstrap();
+        CauldronRecipes.bootstrap();
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
