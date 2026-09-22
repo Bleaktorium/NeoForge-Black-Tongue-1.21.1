@@ -22,6 +22,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.RITUAL_TABLE_ITEM.get());
                         output.accept(ModItems.RUNIC_STONE_ITEM.get());
                         output.accept(ModItems.WITCHS_CAULDRON_ITEM.get());
+                        output.accept(ModItems.CAULDRON_SCRUB.get());
+                        output.accept(ModItems.CAULDRON_TERMINATOR.get());
                     })
                     .build());
 }

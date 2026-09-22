@@ -1,0 +1,8 @@
+{
+  "name": "book.black_tongue.ancient_tome.title",
+  "landing_text": "book.black_tongue.ancient_tome.landing",
+  "use_resource_pack": true,
+  "model": "patchouli:book_purple",
+  "text_color": "3B0764",
+  "creative_tab": "black_tongue:black_tongue_tab"
+}

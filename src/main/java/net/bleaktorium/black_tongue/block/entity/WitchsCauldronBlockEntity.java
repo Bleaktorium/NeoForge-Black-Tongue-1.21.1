@@ -1,22 +1,31 @@
 package net.bleaktorium.black_tongue.block.entity;
 
-import net.bleaktorium.black_tongue.cauldron.CauldronIngredientData;
-import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
-import net.bleaktorium.black_tongue.cauldron.CauldronRecipe;
-import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
+import net.bleaktorium.black_tongue.cauldron.*;
 import net.bleaktorium.black_tongue.ritual.RitualMath;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
+import net.minecraft.world.phys.AABB;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class WitchsCauldronBlockEntity extends BlockEntity {
+
+    private Player lastInteractingPlayer = null;
+
+    public void setLastInteractingPlayer(Player player) {
+        this.lastInteractingPlayer = player;
+    }
 
     public enum Stage {
         ESTABLISHING_BASE, RECIPE_FIRST_HALF, RECIPE_SECOND_HALF, BREWING_WAVES, DONE
@@ -42,6 +51,8 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     private int waveTicksRemaining;
     private int waveNetThrown;
     private final List<Double> waveAccuracies = new ArrayList<>();
+
+    private ServerBossEvent waveBossBar = null;
 
     public WitchsCauldronBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.WITCHS_CAULDRON_BE.get(), pos, state);
@@ -128,6 +139,8 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
             return;
         }
 
+        hideBossBar();
+
         RandomSource random = this.level.getRandom();
         int candidate;
         do {
@@ -140,7 +153,7 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         waveTicksRemaining = WAVE_DURATION_TICKS;
 
         lastResult = "Wave " + (waveIndex + 1) + "/" + matchedRecipe.waveCount() +
-                " — the brew shifted! Correct it before time runs out.";
+                " — shifted to " + candidate + " (target: " + baseTemperature + ").";
     }
 
     private void evaluateWave() {
@@ -158,8 +171,14 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     }
 
     private void finishBrewing() {
+        hideBossBar();
+
         double averageAccuracy = waveAccuracies.stream().mapToDouble(d -> d).average().orElse(0.0);
         RitualMath.RitualOutcome outcome = RitualMath.mapScoreToOutcome(averageAccuracy);
+
+        if (this.level instanceof ServerLevel && lastInteractingPlayer != null) {
+            CauldronEffects.applyBrewOutcome(outcome, lastInteractingPlayer, matchedRecipe);
+        }
 
         stage = Stage.DONE;
         lastResult = "Brewing complete! Average accuracy: " +
@@ -167,14 +186,77 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
     }
 
     public void tickWave() {
-        if (stage != Stage.BREWING_WAVES || waveTicksRemaining <= 0) return;
+        if (stage != Stage.BREWING_WAVES || waveTicksRemaining <= 0) {
+            hideBossBar();
+            return;
+        }
+
         waveTicksRemaining--;
+        updateBossBar();
+
         if (waveTicksRemaining <= 0) {
             evaluateWave();
         }
     }
 
+    private void updateBossBar() {
+        int currentValue = waveStartTemperature + waveNetThrown;
+
+        if (waveBossBar == null) {
+            waveBossBar = new ServerBossEvent(
+                    Component.literal("Wave " + (waveIndex + 1) + "/" + matchedRecipe.waveCount() +
+                            " — Now: " + currentValue + " | Target: " + baseTemperature),
+                    BossEvent.BossBarColor.PURPLE,
+                    BossEvent.BossBarOverlay.PROGRESS
+            );
+        } else {
+            waveBossBar.setName(Component.literal("Wave " + (waveIndex + 1) + "/" + matchedRecipe.waveCount() +
+                    " — Now: " + currentValue + " | Target: " + baseTemperature));
+        }
+
+        waveBossBar.setProgress((float) waveTicksRemaining / WAVE_DURATION_TICKS);
+
+        AABB nearbyArea = new AABB(worldPosition).inflate(16);
+        List<ServerPlayer> nearbyPlayers = level.getEntitiesOfClass(ServerPlayer.class, nearbyArea);
+
+        for (ServerPlayer player : nearbyPlayers) {
+            if (!waveBossBar.getPlayers().contains(player)) {
+                waveBossBar.addPlayer(player);
+            }
+        }
+        for (ServerPlayer player : new ArrayList<>(waveBossBar.getPlayers())) {
+            if (!nearbyPlayers.contains(player)) {
+                waveBossBar.removePlayer(player);
+            }
+        }
+    }
+
+    private void hideBossBar() {
+        if (waveBossBar != null) {
+            waveBossBar.removeAllPlayers();
+            waveBossBar = null;
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        hideBossBar();
+    }
+
+
+    public void terminateBrewing() {
+        if (stage != Stage.BREWING_WAVES) return; // only meaningful mid-brew
+        lastResult = "The brewing was safely stopped.";
+        resetProgress();
+    }
+
+    public void scrub() {
+        resetProgress();
+    }
+
     private void resetProgress() {
+        hideBossBar();
         stage = Stage.ESTABLISHING_BASE;
         active = false;
         currentTemperature = 0;
@@ -182,6 +264,8 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         baseTemperature = null;
         pendingRecipeIngredients.clear();
         matchedRecipe = null;
+        waveIndex = 0;
+        waveAccuracies.clear();
     }
 
     public Stage getStage() { return stage; }

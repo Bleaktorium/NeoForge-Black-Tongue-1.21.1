@@ -1,0 +1,4 @@
+{
+  "parent": "item/generated",
+  "textures": { "layer0": "black_tongue:item/skip_the_soak" }
+}

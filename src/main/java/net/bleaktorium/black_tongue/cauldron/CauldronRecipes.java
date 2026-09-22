@@ -1,5 +1,6 @@
 package net.bleaktorium.black_tongue.cauldron;
 
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -15,7 +16,10 @@ public class CauldronRecipes {
                 2,
                 Map.of(Items.SUGAR, 1, Items.COCOA_BEANS, 1),
                 Map.of(Items.HONEY_BOTTLE, 1, Items.MILK_BUCKET, 1),
-                3 // low-level potion
+                3,
+                MobEffects.REGENERATION,
+                60 * 20,
+                1
         ));
     }
 

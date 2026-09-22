@@ -2,5 +2,18 @@
   "creativetab.black_tongue": "Black Tongue",
   "block.black_tongue.runic_stone": "Runic Stone",
   "block.black_tongue.ritual_table": "Ritual Table",
-  "item.black_tongue.runic_etching_tool": "Runic Etching Tool"
+  "item.black_tongue.runic_etching_tool": "Runic Etching Tool",
+  "item.black_tongue.cauldron_scrub": "Cauldron Scrub",
+  "item.black_tongue.cauldron_terminator": "Fairy Bottle",
+  "item.black_tongue.witchs_cauldron": "Witch's Cauldron",
+
+
+
+  "book.black_tongue.ancient_tome.title": "Ancient Tome",
+  "book.black_tongue.ancient_tome.landing": "A book of forgotten magics, waiting to be understood.",
+  "category.black_tongue.witchcraft.name": "Witchcraft",
+  "category.black_tongue.witchcraft.description": "The old ways of the coven.",
+  "entry.black_tongue.ancient_tome_intro.name": "Beginnings",
+  "entry.black_tongue.ancient_tome_intro.page1": "You have found a book bound in old leather. Its pages are blank to most, but something stirs as you hold it..."
+
 }

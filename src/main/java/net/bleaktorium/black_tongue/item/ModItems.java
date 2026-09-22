@@ -2,7 +2,10 @@ package net.bleaktorium.black_tongue.item;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
 import net.bleaktorium.black_tongue.block.ModBlocks;
+import net.bleaktorium.black_tongue.item.custom.CauldronScrubItem;
+import net.bleaktorium.black_tongue.item.custom.CauldronTerminatorItem;
 import net.bleaktorium.black_tongue.item.custom.RunicEtchingTool;
+import net.bleaktorium.black_tongue.item.custom.WitchsCauldronItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -12,6 +15,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Black_Tongue.MOD_ID);
 
+
+    // RITUAL
     public static final DeferredItem<RunicEtchingTool> RUNIC_ETCHING_TOOL = ITEMS.registerItem("runic_etching_tool",
             RunicEtchingTool::new, new Item.Properties().durability(64));
 
@@ -27,5 +32,12 @@ public class ModItems {
             )),
             new Item.Properties());
 
-    public static final DeferredItem<BlockItem> WITCHS_CAULDRON_ITEM = ITEMS.registerSimpleBlockItem("witchs_cauldron", ModBlocks.WITCHS_CAULDRON);
+    // CAULDRON
+    public static final DeferredItem<WitchsCauldronItem> WITCHS_CAULDRON_ITEM =
+            ITEMS.registerItem("witchs_cauldron", WitchsCauldronItem::new, new Item.Properties());
+
+    public static final DeferredItem<CauldronScrubItem> CAULDRON_SCRUB =
+            ITEMS.registerItem("cauldron_scrub", CauldronScrubItem::new, new Item.Properties().durability(16));
+    public static final DeferredItem<CauldronTerminatorItem> CAULDRON_TERMINATOR =
+            ITEMS.registerItem("cauldron_terminator", CauldronTerminatorItem::new, new Item.Properties());
 }

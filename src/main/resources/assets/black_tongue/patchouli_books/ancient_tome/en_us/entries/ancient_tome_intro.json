@@ -1,0 +1,11 @@
+{
+  "name": "entry.black_tongue.ancient_tome_intro.name",
+  "category": "black_tongue:witchcraft",
+  "icon": "black_tongue:runic_etching_tool",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "entry.black_tongue.ancient_tome_intro.page1"
+    }
+  ]
+}

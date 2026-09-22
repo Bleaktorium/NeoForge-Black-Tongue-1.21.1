@@ -2,6 +2,8 @@ package net.bleaktorium.black_tongue.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.bleaktorium.black_tongue.block.entity.WitchsCauldronBlockEntity;
+import net.bleaktorium.black_tongue.item.custom.CauldronScrubItem;
+import net.bleaktorium.black_tongue.item.custom.CauldronTerminatorItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -60,7 +62,6 @@ public class WitchsCauldronBlock extends BaseEntityBlock {
 
             if (!level.isClientSide) {
                 cauldron.startBrewing();
-
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                     if (!player.getInventory().add(new ItemStack(Items.BUCKET))) {
@@ -71,7 +72,9 @@ public class WitchsCauldronBlock extends BaseEntityBlock {
             }
             return ItemInteractionResult.SUCCESS;
         }
-
+        if (stack.getItem() instanceof CauldronScrubItem) {
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
@@ -80,6 +83,7 @@ public class WitchsCauldronBlock extends BaseEntityBlock {
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
         if (level.getBlockEntity(pos) instanceof WitchsCauldronBlockEntity cauldron) {
+            cauldron.setLastInteractingPlayer(player);
             cauldron.stir();
             player.displayClientMessage(Component.literal(cauldron.getLastResult()), true);
         }
@@ -101,6 +105,15 @@ public class WitchsCauldronBlock extends BaseEntityBlock {
                     Item item = stack.getItem();
 
                     if (item == Items.WATER_BUCKET) continue;
+
+                    if (item instanceof CauldronTerminatorItem) {
+                        if (cauldron.getStage() == WitchsCauldronBlockEntity.Stage.BREWING_WAVES) {
+                            cauldron.terminateBrewing();
+                            stack.shrink(1);
+                            if (stack.isEmpty()) itemEntity.discard();
+                        }
+                        continue;
+                    }
 
                     if (cauldron.tryAddIngredient(item)) {
                         stack.shrink(1);
