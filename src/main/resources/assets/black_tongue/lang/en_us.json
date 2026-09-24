@@ -9,7 +9,7 @@
 
 
 
-  "book.black_tongue.ancient_tome.title": "Ancient Tome",
-  "book.black_tongue.ancient_tome.landing": "A book of forgotten magics, waiting to be understood."
+  "book.black_tongue.ancient_tome.title": "Ancient Journal",
+  "book.black_tongue.ancient_tome.landing": "This journal belongs to $(br)$(o)John E Woulievare, $(br)Grand Master Witch Hunter.$() $(br2)May the contents of this book prove useful in the fight against the wicked darkness."
 
 }
