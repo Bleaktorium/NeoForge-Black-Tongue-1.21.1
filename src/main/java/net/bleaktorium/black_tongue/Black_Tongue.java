@@ -4,11 +4,14 @@ import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.block.entity.ModBlockEntities;
 import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
 import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
+import net.bleaktorium.black_tongue.coven.ModAttachments;
+import net.bleaktorium.black_tongue.entity.ModEntities;
 import net.bleaktorium.black_tongue.item.ModCreativeModeTabs;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -20,6 +23,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.bleaktorium.black_tongue.entity.client.CovenMotherRenderer;
 
 
 @Mod(Black_Tongue.MOD_ID)
@@ -40,6 +44,8 @@ public class Black_Tongue {
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         CauldronIngredients.bootstrap();
         CauldronRecipes.bootstrap();
+        ModAttachments.register(modEventBus);
+        ModEntities.ENTITY_TYPES.register(modEventBus);
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
@@ -64,6 +70,11 @@ public class Black_Tongue {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
 
+        }
+
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(ModEntities.COVEN_MOTHER.get(), CovenMotherRenderer::new);
         }
 
     }
