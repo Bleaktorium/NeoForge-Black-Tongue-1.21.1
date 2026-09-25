@@ -4,14 +4,18 @@ import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.block.entity.ModBlockEntities;
 import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
 import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
+import net.bleaktorium.black_tongue.coven.JournalTradeMenu;
 import net.bleaktorium.black_tongue.coven.ModAttachments;
 import net.bleaktorium.black_tongue.entity.ModEntities;
 import net.bleaktorium.black_tongue.item.ModCreativeModeTabs;
 import net.bleaktorium.black_tongue.item.ModItems;
+import net.bleaktorium.black_tongue.item.menu.ModMenuTypes;
+import net.minecraft.world.inventory.MenuType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -24,6 +28,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.bleaktorium.black_tongue.entity.client.CovenMotherRenderer;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.bleaktorium.black_tongue.coven.JournalTradeScreen;
 
 
 @Mod(Black_Tongue.MOD_ID)
@@ -46,6 +52,7 @@ public class Black_Tongue {
         CauldronRecipes.bootstrap();
         ModAttachments.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
+        ModMenuTypes.MENU_TYPES.register(modEventBus);
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
@@ -66,7 +73,7 @@ public class Black_Tongue {
     }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents  {
+    public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
 
@@ -77,5 +84,9 @@ public class Black_Tongue {
             event.registerEntityRenderer(ModEntities.COVEN_MOTHER.get(), CovenMotherRenderer::new);
         }
 
+        @SubscribeEvent
+        public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
+            event.register(ModMenuTypes.JOURNAL_TRADE.get(), JournalTradeScreen::new);
+        }
     }
 }

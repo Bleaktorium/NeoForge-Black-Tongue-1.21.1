@@ -10,6 +10,8 @@ import java.util.UUID;
 public class DialogSessionManager {
     private static final Map<UUID, Deque<DialogNode>> HISTORY = new HashMap<>();
     private static final Map<UUID, DialogNode> CURRENT = new HashMap<>();
+    private static final Map<UUID, String> SPEAKER_NAMES = new HashMap<>();
+    private static final Map<UUID, String> THEMES = new HashMap<>();
 
     public static void goTo(ServerPlayer player, DialogNode from, DialogNode to) {
         HISTORY.computeIfAbsent(player.getUUID(), id -> new ArrayDeque<>()).push(from);
@@ -23,14 +25,25 @@ public class DialogSessionManager {
         return previous;
     }
 
-    public static void startSession(ServerPlayer player, DialogNode root) {
+    public static void startSession(ServerPlayer player, DialogNode root, String speakerName, String themeId) {
         HISTORY.put(player.getUUID(), new ArrayDeque<>());
         CURRENT.put(player.getUUID(), root);
+        SPEAKER_NAMES.put(player.getUUID(), speakerName);
+        THEMES.put(player.getUUID(), themeId);
+    }
+
+    public static String getTheme(ServerPlayer player) {
+        return THEMES.getOrDefault(player.getUUID(), "witchcraft");
+    }
+
+    public static String getSpeakerName(ServerPlayer player) {
+        return SPEAKER_NAMES.getOrDefault(player.getUUID(), "");
     }
 
     public static void endSession(ServerPlayer player) {
         HISTORY.remove(player.getUUID());
         CURRENT.remove(player.getUUID());
+        SPEAKER_NAMES.remove(player.getUUID());
     }
 
     public static DialogNode getCurrent(ServerPlayer player) {

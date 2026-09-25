@@ -6,8 +6,11 @@ import net.bleaktorium.black_tongue.dialog.DialogOption;
 import net.bleaktorium.black_tongue.dialog.DialogSessionManager;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.bleaktorium.black_tongue.network.ModMessages;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -31,8 +34,8 @@ public class YagaDialogTrees {
         return new DialogNode(
                 "Ask about magic",
                 List.of(
-                        new DialogOption("I wish to join your coven", p -> joinCovenIntro(),
-                                p -> isEligibleToAsk(p)),
+                        DialogOption.quest(new DialogOption("I wish to join your coven", p -> joinCovenIntro(),
+                                p -> isEligibleToAsk(p))),
                         new DialogOption("I changed my mind", p -> dropQuest(p),
                                 p -> p.getData(ModAttachments.COVEN_DATA.get()).state() == CovenRelationshipState.TASK_ACCEPTED),
                         new DialogOption("Ask about witchcraft", p -> askAboutWitchcraft()),
@@ -127,8 +130,8 @@ public class YagaDialogTrees {
         return new DialogNode(
                 "Have you brought me a potion?",
                 List.of(
-                        new DialogOption("Hand in the potion", YagaDialogTrees::handInPotion,
-                                CovenDialogChecks::isHoldingAssignedPotion),
+                        DialogOption.quest(new DialogOption("Hand in the potion", YagaDialogTrees::handInPotion,
+                                CovenDialogChecks::isHoldingAssignedPotion)),
                         new DialogOption("Ask about magic", p -> askAboutMagic()),
                         new DialogOption("I would like to trade", p -> tradePlaceholder()),
                         new DialogOption("Leave", p -> null)
@@ -152,12 +155,9 @@ public class YagaDialogTrees {
         potion.shrink(1);
 
         CovenPlayerData current = player.getData(ModAttachments.COVEN_DATA.get());
-        // POTION_DELIVERED now correctly means "gave the potion, still owes the
-        // journal" — this is the state a LATER visit (after leaving mid-chain)
-        // will route through, landing on followUpD instead of repeating this.
         CovenPlayerData newData = new CovenPlayerData(CovenRelationshipState.POTION_DELIVERED, current.assignedPotions());
         player.setData(ModAttachments.COVEN_DATA.get(), newData);
-        CovenSync.syncQuestToClient(player, newData); // quest resolved, tracker clears
+        CovenSync.syncQuestToClient(player, newData);
 
         return new DialogNode(
                 "Oh my, what a fine little bottle you got there for me! I expected you to run off and never come back... You are a determined one.",
@@ -166,7 +166,6 @@ public class YagaDialogTrees {
     }
 
     private static DialogNode amuletDropNode(ServerPlayer player) {
-        // "coven mother drops summoning amulet bound to her at player feet"
         ItemStack amulet = new ItemStack(ModItems.YAGA_SUMMONING_AMULET.get());
         ItemEntity itemEntity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), amulet);
         player.level().addFreshEntity(itemEntity);
@@ -182,8 +181,8 @@ public class YagaDialogTrees {
         return new DialogNode(
                 "One more thing. This little journal of yours... You will need more than a diary of a dead man to aid you in this journey. You need a proper grimoire.",
                 List.of(
-                        new DialogOption("Hand her the Ancient Journal", p -> openJournalTrade(p),
-                                CovenDialogChecks::isHoldingAncientJournal),
+                        DialogOption.quest(new DialogOption("Hand her the Ancient Journal", p -> openJournalTrade(p),
+                                CovenDialogChecks::isHoldingAncientJournal)),
                         new DialogOption("I don't have it on me right now", p -> new DialogNode(
                                 "Then bring it here, you are going to need it.",
                                 List.of(new DialogOption("Leave", p2 -> null))
@@ -193,9 +192,20 @@ public class YagaDialogTrees {
     }
 
     private static DialogNode openJournalTrade(ServerPlayer player) {
+        player.openMenu(new SimpleMenuProvider(
+                (containerId, inv, p) -> new JournalTradeMenu(containerId, inv, new SimpleContainer(1), (ServerPlayer) p),
+                Component.literal("Trade with Yaga")
+        ));
+        return null;
+    }
+
+    public static DialogNode followUpC() {
         return new DialogNode(
-                "(the journal trade isn't wired up yet — coming next)",
-                List.of(new DialogOption("Leave", p -> null))
+                "Yes?",
+                List.of(
+                        new DialogOption("I would like to trade", p -> tradePlaceholder()),
+                        new DialogOption("Leave", p -> null)
+                )
         );
     }
 
@@ -211,8 +221,4 @@ public class YagaDialogTrees {
         );
     }
 
-    private static void syncQuestToClient(ServerPlayer player, CovenPlayerData data) {
-        boolean active = data.state() == CovenRelationshipState.TASK_ACCEPTED;
-        ModMessages.sendToPlayer(player, new CovenQuestSyncPacket(active, active ? data.assignedPotions() : List.of()));
-    }
 }

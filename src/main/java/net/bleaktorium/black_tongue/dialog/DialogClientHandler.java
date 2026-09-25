@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class DialogClientHandler {
     public static void handleSync(DialogSyncPacket packet, IPayloadContext context) {
         context.enqueueWork(() ->
-                Minecraft.getInstance().setScreen(new DialogScreen(packet.text(), packet.optionLabels()))
+                Minecraft.getInstance().setScreen(new DialogScreen(packet.text(), packet.speakerName(), packet.themeId(), packet.options()))
         );
     }
 

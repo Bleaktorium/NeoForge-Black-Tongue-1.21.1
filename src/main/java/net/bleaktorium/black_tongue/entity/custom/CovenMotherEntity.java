@@ -48,6 +48,7 @@ public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
+
         return cache;
     }
 
@@ -61,11 +62,11 @@ public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
                 case TASK_DECLINED -> YagaDialogTrees.followUpB();
                 case TASK_ACCEPTED -> YagaDialogTrees.followUpA();
                 case POTION_DELIVERED -> YagaDialogTrees.followUpD();
-                case GRIMOIRE_RECEIVED -> YagaDialogTrees.firstMeeting();
+                case GRIMOIRE_RECEIVED -> YagaDialogTrees.followUpC();
             };
 
-            DialogSessionManager.startSession(serverPlayer, root);
             DialogHandler.sendNode(serverPlayer, root);
+            DialogSessionManager.startSession(serverPlayer, root, "Coven Mother Yaga", "witchcraft");
         }
         return InteractionResult.SUCCESS;
     }

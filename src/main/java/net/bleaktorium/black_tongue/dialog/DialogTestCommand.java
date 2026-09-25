@@ -33,7 +33,7 @@ public class DialogTestCommand {
                                     )
                             );
 
-                            DialogSessionManager.startSession(player, root);
+                            DialogSessionManager.startSession(player, root, "Test NPC", "witchcraft");
                             DialogHandler.sendNode(player, root);
                             return 1;
                         })));

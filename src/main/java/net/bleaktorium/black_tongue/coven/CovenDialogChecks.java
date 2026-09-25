@@ -35,14 +35,14 @@ public class CovenDialogChecks {
     }
 
     public static boolean isHoldingAncientJournal(ServerPlayer player) {
-        ItemStack held = player.getMainHandItem();
+        return isAncientTomeStack(player.getMainHandItem());
+    }
 
+    public static boolean isAncientTomeStack(ItemStack stack) {
         DataComponentType<?> bookComponent = BuiltInRegistries.DATA_COMPONENT_TYPE.get(PATCHOULI_BOOK_COMPONENT_ID);
         if (bookComponent == null) return false;
 
-        Object rawValue = held.get(bookComponent);
-        if (!(rawValue instanceof ResourceLocation bookId)) return false;
-
-        return ANCIENT_TOME_BOOK_ID.equals(bookId);
+        Object rawValue = stack.get(bookComponent);
+        return rawValue instanceof ResourceLocation bookId && ANCIENT_TOME_BOOK_ID.equals(bookId);
     }
 }

@@ -35,10 +35,11 @@ public class DialogHandler {
     }
 
     public static void sendNode(ServerPlayer player, DialogNode node) {
-        List<String> labels = node.options().stream()
+        List<DialogOptionView> views = node.options().stream()
                 .filter(opt -> opt.isVisible(player))
-                .map(DialogOption::label)
+                .map(opt -> new DialogOptionView(opt.label(), opt.marksQuest()))
                 .toList();
-        ModMessages.sendToPlayer(player, new DialogSyncPacket(node.text(), labels));
+        ModMessages.sendToPlayer(player, new DialogSyncPacket(
+                node.text(), DialogSessionManager.getSpeakerName(player), DialogSessionManager.getTheme(player), views));
     }
 }
