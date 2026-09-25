@@ -1,0 +1,11 @@
+{
+  "name": "A Proper Grimoire",
+  "category": "black_tongue:witchcraft",
+  "icon": "black_tongue:runic_stone",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The pages that once held only a stranger's notes now carry your own path forward. This is where your real teachings will live."
+    }
+  ]
+}

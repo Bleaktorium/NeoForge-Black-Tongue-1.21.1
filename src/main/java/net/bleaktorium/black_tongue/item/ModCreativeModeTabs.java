@@ -24,6 +24,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.WITCHS_CAULDRON_ITEM.get());
                         output.accept(ModItems.CAULDRON_SCRUB.get());
                         output.accept(ModItems.CAULDRON_TERMINATOR.get());
+                        output.accept(ModItems.DEBUG_YAGA_RESET.get());
+                        output.accept(ModItems.YAGA_SUMMONING_AMULET.get());
                     })
                     .build());
 }

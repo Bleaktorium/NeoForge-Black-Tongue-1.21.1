@@ -1,5 +1,7 @@
 package net.bleaktorium.black_tongue.entity.custom;
 
+import net.bleaktorium.black_tongue.coven.CovenPlayerData;
+import net.bleaktorium.black_tongue.coven.ModAttachments;
 import net.bleaktorium.black_tongue.dialog.DialogHandler;
 import net.bleaktorium.black_tongue.dialog.DialogNode;
 import net.bleaktorium.black_tongue.dialog.DialogOption;
@@ -19,7 +21,6 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
 import java.util.List;
 
 public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
@@ -53,16 +54,15 @@ public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!this.level().isClientSide && player instanceof ServerPlayer serverPlayer) {
-            DialogNode root = new DialogNode(
-                    "Hello, traveler. Ask me something.",
-                    List.of(
-                            new DialogOption("Tell me a secret", p -> new DialogNode(
-                                    "The secret is... there is no secret.",
-                                    List.of(new DialogOption("Back", DialogSessionManager::goBack))
-                            )),
-                            new DialogOption("Leave", p -> null)
-                    )
-            );
+            CovenPlayerData data = serverPlayer.getData(ModAttachments.COVEN_DATA.get());
+
+            DialogNode root = switch (data.state()) {
+                case NEVER_ASKED -> YagaDialogTrees.firstMeeting();
+                case TASK_DECLINED -> YagaDialogTrees.followUpB();
+                case TASK_ACCEPTED -> YagaDialogTrees.followUpA();
+                case POTION_DELIVERED -> YagaDialogTrees.followUpD();
+                case GRIMOIRE_RECEIVED -> YagaDialogTrees.firstMeeting();
+            };
 
             DialogSessionManager.startSession(serverPlayer, root);
             DialogHandler.sendNode(serverPlayer, root);

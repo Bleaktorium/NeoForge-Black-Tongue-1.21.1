@@ -1,6 +1,8 @@
 package net.bleaktorium.black_tongue.dialog;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
+import net.bleaktorium.black_tongue.coven.CovenQuestClientHandler;
+import net.bleaktorium.black_tongue.coven.CovenQuestSyncPacket;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -38,6 +40,15 @@ public class DialogNetworking {
                 new DirectionalPayloadHandler<>(
                         (packet, context) -> {},
                         DialogServerHandler::handleChoice
+                )
+        );
+
+        registrar.playBidirectional(
+                CovenQuestSyncPacket.TYPE,
+                CovenQuestSyncPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        CovenQuestClientHandler::handleSync,
+                        (packet, context) -> {} // server never receives this
                 )
         );
     }

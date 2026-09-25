@@ -23,10 +23,12 @@ public class DialogHandler {
 
         if (next == null) {
             DialogSessionManager.endSession(player);
-            ModMessages.sendToPlayer(player, new DialogClosePacket()); // NEW — this line was missing entirely
+            ModMessages.sendToPlayer(player, new DialogClosePacket());
         } else {
-            if (!chosen.label().equals("Back")) {
+            if (chosen.pushesHistory()) {
                 DialogSessionManager.goTo(player, current, next);
+            } else {
+                DialogSessionManager.setCurrentWithoutHistory(player, next);
             }
             sendNode(player, next);
         }

@@ -14,10 +14,10 @@ public class ModAttachments {
     private static final Codec<CovenRelationshipState> STATE_CODEC =
             Codec.STRING.xmap(CovenRelationshipState::valueOf, Enum::name);
 
-    public static final Supplier<AttachmentType<CovenRelationshipState>> COVEN_RELATIONSHIP =
-            ATTACHMENT_TYPES.register("coven_relationship", () -> AttachmentType
-                    .builder(() -> CovenRelationshipState.NEVER_ASKED) // default for a player who's never talked to her
-                    .serialize(STATE_CODEC)            // makes it actually persist in the save file
+    public static final Supplier<AttachmentType<CovenPlayerData>> COVEN_DATA =
+            ATTACHMENT_TYPES.register("coven_data", () -> AttachmentType
+                    .builder(CovenPlayerData::initial)
+                    .serialize(CovenPlayerData.CODEC)
                     .build());
 
     public static void register(net.neoforged.bus.api.IEventBus modEventBus) {

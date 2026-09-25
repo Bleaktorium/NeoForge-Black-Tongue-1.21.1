@@ -34,6 +34,11 @@ public class DialogSessionManager {
     }
 
     public static DialogNode getCurrent(ServerPlayer player) {
+
         return CURRENT.get(player.getUUID());
+    }
+
+    public static void setCurrentWithoutHistory(ServerPlayer player, DialogNode node) {
+        CURRENT.put(player.getUUID(), node);
     }
 }

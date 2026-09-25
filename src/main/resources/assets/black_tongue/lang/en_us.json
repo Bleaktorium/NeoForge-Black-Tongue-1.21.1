@@ -6,10 +6,13 @@
   "item.black_tongue.cauldron_scrub": "Cauldron Scrub",
   "item.black_tongue.cauldron_terminator": "Fairy Bottle",
   "item.black_tongue.witchs_cauldron": "Witch's Cauldron",
+  "item.black_tongue.yaga_summoning_amulet": "Yaga's Summoning Amulet",
 
 
 
   "book.black_tongue.ancient_tome.title": "Ancient Journal",
-  "book.black_tongue.ancient_tome.landing": "This journal belongs to $(br)$(o)John E Woulievare, $(br)Grand Master Witch Hunter.$() $(br2)May the contents of this book prove useful in the fight against the wicked darkness."
+  "book.black_tongue.ancient_tome.landing": "This journal belongs to $(br)$(o)John E Woulievare, $(br)Grand Master Witch Hunter.$() $(br2)May the contents of this book prove useful in the fight against the wicked darkness.",
+  "book.black_tongue.coven_grimoire.title": "Coven Grimoire",
+  "book.black_tongue.coven_grimoire.landing": "Yaga's own teachings, bound in your name."
 
 }
