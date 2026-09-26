@@ -40,12 +40,13 @@ public class DialogScreen extends Screen {
     private static final int PANEL_HEIGHT = 166;
     private static final int PORTRAIT_X = 13, PORTRAIT_Y = 15, PORTRAIT_W = 96, PORTRAIT_H = 83;
     private static final int TEXTBOX_X = 123, TEXTBOX_Y = 21, TEXTBOX_W = 135, TEXTBOX_H = 60;
-    private static final int TRADE_BTN_X = 50, TRADE_BTN_Y = 126, TRADE_BTN_W = 22, TRADE_BTN_H = 21;
+    private static final int TRADE_BTN_X = 50, TRADE_BTN_Y = 126, TRADE_BTN_W = 20, TRADE_BTN_H = 20;
     private static final int OPTIONS_X = TEXTBOX_X;
-    private static final int OPTIONS_Y_START = TEXTBOX_Y + TEXTBOX_H + 6;
+    private static final int OPTIONS_Y_START = TEXTBOX_Y + TEXTBOX_H + 10;
     private static final int NAME_Y = PORTRAIT_Y + PORTRAIT_H + 3;
     private static final float TEXT_SCALE = 0.85f;
     private static final int SCALED_LINE_HEIGHT = Math.round(10 * TEXT_SCALE);
+    private static final int OPTION_GAP = 2;
 
     private final String npcText;
     private final String speakerName;
@@ -125,7 +126,7 @@ public class DialogScreen extends Screen {
         int bx = panelX + TEXTBOX_X;
         int by = panelY + TEXTBOX_Y;
 
-        graphics.fill(bx, by, bx + TEXTBOX_W, by + TEXTBOX_H, 0x291d31);
+        graphics.fill(bx, by, bx + TEXTBOX_W, by + TEXTBOX_H, 0xFF291D31);
 
         graphics.enableScissor(bx, by, bx + TEXTBOX_W, by + TEXTBOX_H);
         graphics.pose().pushPose();
@@ -159,16 +160,14 @@ public class DialogScreen extends Screen {
         int bx = panelX + TRADE_BTN_X;
         int by = panelY + TRADE_BTN_Y;
 
-        boolean hovered = mouseX >= bx - 1 && mouseX < bx + TRADE_BTN_W + 1
-                && mouseY >= by - 1 && mouseY < by + TRADE_BTN_H + 1;
+        boolean hovered = mouseX >= bx && mouseX < bx + TRADE_BTN_W && mouseY >= by && mouseY < by + TRADE_BTN_H;
         boolean pressed = hovered && GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
 
-        if (pressed) {
-            graphics.blit(TRADE_PRESSED, bx, by, 0, 0, TRADE_BTN_W, TRADE_BTN_H, TRADE_BTN_W, TRADE_BTN_H);
-        } else if (hovered) {
-            graphics.blit(TRADE_HOVER, bx - 1, by - 1, 0, 0, 25, 25, 25, 25);
-        } else {
-            graphics.blit(TRADE_NORMAL, bx, by, 0, 0, TRADE_BTN_W, TRADE_BTN_H, TRADE_BTN_W, TRADE_BTN_H);
+        ResourceLocation texture = pressed ? TRADE_PRESSED : hovered ? TRADE_HOVER : TRADE_NORMAL;
+        graphics.blit(texture, bx, by, 0, 0, TRADE_BTN_W, TRADE_BTN_H, TRADE_BTN_W, TRADE_BTN_H);
+
+        if (hovered) {
+            graphics.renderTooltip(font, Component.literal("Trade"), mouseX, mouseY);
         }
     }
 
@@ -200,7 +199,7 @@ public class DialogScreen extends Screen {
             }
             graphics.pose().popPose();
 
-            lineY += optionHeight;
+            lineY += optionHeight + OPTION_GAP;
         }
     }
 
@@ -212,7 +211,7 @@ public class DialogScreen extends Screen {
         int panelY = panelY();
 
         int tbx = panelX + TRADE_BTN_X, tby = panelY + TRADE_BTN_Y;
-        if (mouseX >= tbx - 1 && mouseX < tbx + TRADE_BTN_W + 1 && mouseY >= tby - 1 && mouseY < tby + TRADE_BTN_H + 1) {
+        if (mouseX >= tbx && mouseX < tbx + TRADE_BTN_W && mouseY >= tby && mouseY < tby + TRADE_BTN_H) {
             return true;
         }
 
@@ -235,7 +234,7 @@ public class DialogScreen extends Screen {
                 ModMessages.sendToServer(new DialogChoicePacket(i));
                 return true;
             }
-            lineY += optionHeight;
+            lineY += optionHeight + OPTION_GAP;
         }
 
         return super.mouseClicked(mouseX, mouseY, button);

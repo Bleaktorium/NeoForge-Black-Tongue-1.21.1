@@ -65,8 +65,8 @@ public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
                 case GRIMOIRE_RECEIVED -> YagaDialogTrees.followUpC();
             };
 
-            DialogHandler.sendNode(serverPlayer, root);
             DialogSessionManager.startSession(serverPlayer, root, "Coven Mother Yaga", "witchcraft");
+            DialogHandler.sendNode(serverPlayer, root);
         }
         return InteractionResult.SUCCESS;
     }
