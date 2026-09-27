@@ -6,6 +6,7 @@ import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
 import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
 import net.bleaktorium.black_tongue.coven.JournalTradeMenu;
 import net.bleaktorium.black_tongue.coven.ModAttachments;
+import net.bleaktorium.black_tongue.coven.ModDataComponents;
 import net.bleaktorium.black_tongue.entity.ModEntities;
 import net.bleaktorium.black_tongue.item.ModCreativeModeTabs;
 import net.bleaktorium.black_tongue.item.ModItems;
@@ -55,6 +56,7 @@ public class Black_Tongue {
         ModMenuTypes.MENU_TYPES.register(modEventBus);
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        ModDataComponents.DATA_COMPONENTS.register(modEventBus);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

@@ -21,4 +21,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<WitchsCauldronBlock> WITCHS_CAULDRON = BLOCKS.register("witchs_cauldron",
             () -> new WitchsCauldronBlock(BlockBehaviour.Properties.of().strength(3.0f).requiresCorrectToolForDrops()));
+
+    public static final DeferredBlock<Block> COVEN_THRONE = BLOCKS.register("coven_throne",
+            () -> new Block(BlockBehaviour.Properties.of().strength(3.0f).requiresCorrectToolForDrops()));
 }

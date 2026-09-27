@@ -15,6 +15,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+import java.util.Optional;
 
 public class YagaDialogTrees {
 
@@ -166,7 +167,9 @@ public class YagaDialogTrees {
     }
 
     private static DialogNode amuletDropNode(ServerPlayer player) {
-        ItemStack amulet = new ItemStack(ModItems.YAGA_SUMMONING_AMULET.get());
+        ItemStack amulet = new ItemStack(ModItems.COVEN_SUMMONING_AMULET.get());
+        amulet.set(ModDataComponents.AMULET_BINDING.get(), new AmuletBinding(SummonedWitchType.COVEN_MOTHER, Optional.empty()));
+
         ItemEntity itemEntity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), amulet);
         player.level().addFreshEntity(itemEntity);
 
