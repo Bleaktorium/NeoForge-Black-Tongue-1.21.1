@@ -5,6 +5,9 @@ import net.bleaktorium.black_tongue.coven.AmuletBinding;
 import net.bleaktorium.black_tongue.coven.ModDataComponents;
 import net.bleaktorium.black_tongue.entity.ModEntities;
 import net.bleaktorium.black_tongue.entity.custom.CovenMotherEntity;
+import net.bleaktorium.black_tongue.entity.custom.CovenlessWitchEntity;
+import net.bleaktorium.black_tongue.entity.custom.WitchIdentity;
+import net.bleaktorium.black_tongue.entity.custom.WitchIdentityPool;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -42,7 +45,11 @@ public class CovenSummoningAmuletItem extends Item {
 
         switch (binding.type()) {
             case COVEN_MOTHER -> summonCovenMother(level, pos, player);
-            case COVENLESS_WITCH -> { /* step 3 */ }
+            case COVENLESS_WITCH -> {
+                if (binding.witchName().isPresent()) {
+                    summonCovenlessWitch(level, pos, binding.witchName().get());
+                }
+            }
         }
 
         return InteractionResult.SUCCESS;
@@ -70,6 +77,18 @@ public class CovenSummoningAmuletItem extends Item {
         yaga.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         yaga.setPersistenceRequired(); // no no to despawn
         level.addFreshEntity(yaga);
+    }
+
+    private void summonCovenlessWitch(Level level, BlockPos pos, String witchName) {
+        WitchIdentity identity = WitchIdentityPool.getByName(witchName);
+
+        CovenlessWitchEntity witch = ModEntities.COVENLESS_WITCH.get().create(level);
+        if (witch == null) return;
+
+        witch.setIdentity(identity);
+        witch.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        witch.startDespawnCountdown(20 * 60); // 1 minute (2 ticks)
+        level.addFreshEntity(witch);
     }
 
     private boolean hasCovenEnvironment(Level level, BlockPos center) {

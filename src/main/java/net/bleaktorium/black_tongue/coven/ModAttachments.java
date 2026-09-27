@@ -19,6 +19,11 @@ public class ModAttachments {
                     .builder(CovenPlayerData::initial)
                     .serialize(CovenPlayerData.CODEC)
                     .build());
+    public static final Supplier<AttachmentType<WitchReputationData>> WITCH_REPUTATION =
+            ATTACHMENT_TYPES.register("witch_reputation", () -> AttachmentType
+                    .builder(WitchReputationData::initial)
+                    .serialize(WitchReputationData.CODEC)
+                    .build());
 
     public static void register(net.neoforged.bus.api.IEventBus modEventBus) {
         ATTACHMENT_TYPES.register(modEventBus);

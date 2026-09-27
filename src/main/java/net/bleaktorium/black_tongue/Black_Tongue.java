@@ -29,6 +29,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.bleaktorium.black_tongue.entity.client.CovenMotherRenderer;
+import net.bleaktorium.black_tongue.entity.client.CovenlessWitchRenderer;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.bleaktorium.black_tongue.coven.JournalTradeScreen;
 
@@ -84,6 +85,7 @@ public class Black_Tongue {
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.COVEN_MOTHER.get(), CovenMotherRenderer::new);
+            event.registerEntityRenderer(ModEntities.COVENLESS_WITCH.get(), CovenlessWitchRenderer::new);
         }
 
         @SubscribeEvent

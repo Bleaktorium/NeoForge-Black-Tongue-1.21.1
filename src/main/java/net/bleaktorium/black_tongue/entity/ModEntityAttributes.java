@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue.entity;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
 import net.bleaktorium.black_tongue.entity.custom.CovenMotherEntity;
+import net.bleaktorium.black_tongue.entity.custom.CovenlessWitchEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
@@ -11,5 +12,6 @@ public class ModEntityAttributes {
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.COVEN_MOTHER.get(), CovenMotherEntity.createAttributes().build());
+        event.put(ModEntities.COVENLESS_WITCH.get(), CovenlessWitchEntity.createAttributes().build());
     }
 }
