@@ -73,12 +73,14 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
+        tag.putInt("DespawnTicks", despawnTicksRemaining);
         super.addAdditionalSaveData(tag);
         if (identityName != null) tag.putString("WitchIdentity", identityName);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
+        despawnTicksRemaining = tag.contains("DespawnTicks") ? tag.getInt("DespawnTicks") : -1;
         super.readAdditionalSaveData(tag);
         if (tag.contains("WitchIdentity")) identityName = tag.getString("WitchIdentity");
     }

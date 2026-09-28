@@ -13,13 +13,17 @@ public class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RitualTableBlockEntity>> RITUAL_TABLE_BE =
             BLOCK_ENTITIES.register("ritual_table_be",
-                    () -> BlockEntityType.Builder.of(RitualTableBlockEntity::new, ModBlocks.RITUAL_TABLE.get()).build(null));
+                    () -> BlockEntityType.Builder.of(RitualTableBlockEntity::new, ModBlocks.RITUAL_TABLE.get()).build(null)
+            );
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RunicStoneBlockEntity>> RUNIC_STONE_BE =
             BLOCK_ENTITIES.register("runic_stone_be",
-                    () -> BlockEntityType.Builder.of(RunicStoneBlockEntity::new, ModBlocks.RUNIC_STONE.get()).build(null));
+                    () -> BlockEntityType.Builder.of(RunicStoneBlockEntity::new,
+                            ModBlocks.RUNIC_STONE.get(), ModBlocks.MOON_PHASE_RUNE.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WitchsCauldronBlockEntity>> WITCHS_CAULDRON_BE =
             BLOCK_ENTITIES.register("witchs_cauldron_be",
                     () -> BlockEntityType.Builder.of(WitchsCauldronBlockEntity::new, ModBlocks.WITCHS_CAULDRON.get()).build(null));
+
+
 }

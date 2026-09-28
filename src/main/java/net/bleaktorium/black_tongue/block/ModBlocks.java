@@ -1,6 +1,7 @@
 package net.bleaktorium.black_tongue.block;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
+import net.bleaktorium.black_tongue.block.custom.MoonPhaseRuneBlock;
 import net.bleaktorium.black_tongue.block.custom.RitualTableBlock;
 import net.bleaktorium.black_tongue.block.custom.RunicStoneBlock;
 import net.bleaktorium.black_tongue.block.custom.WitchsCauldronBlock;
@@ -14,7 +15,9 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Black_Tongue.MOD_ID);
 
     public static final DeferredBlock<RitualTableBlock> RITUAL_TABLE = BLOCKS.register("ritual_table",
-            () -> new RitualTableBlock(BlockBehaviour.Properties.of().strength(3.5f).requiresCorrectToolForDrops()));
+            () -> new RitualTableBlock(BlockBehaviour.Properties.of()
+                    .strength(3.0f)
+                    .noOcclusion()));
 
     public static final DeferredBlock<RunicStoneBlock> RUNIC_STONE = BLOCKS.register("runic_stone",
             () -> new RunicStoneBlock(BlockBehaviour.Properties.of().strength(2.0f).requiresCorrectToolForDrops()));
@@ -24,4 +27,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> COVEN_THRONE = BLOCKS.register("coven_throne",
             () -> new Block(BlockBehaviour.Properties.of().strength(3.0f).requiresCorrectToolForDrops()));
+
+    public static final DeferredBlock<MoonPhaseRuneBlock> MOON_PHASE_RUNE = BLOCKS.register("moon_phase_rune",
+            () -> new MoonPhaseRuneBlock(BlockBehaviour.Properties.of().strength(2.0f)));
 }

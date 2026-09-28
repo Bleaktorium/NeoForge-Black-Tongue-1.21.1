@@ -28,6 +28,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.YAGA_SUMMONING_AMULET.get());
                         output.accept(ModItems.COVEN_THRONE.get());
                         output.accept(ModItems.COVEN_SUMMONING_AMULET.get());
+                        output.accept(ModItems.MOON_PHASE_RUNE_ITEM.get());
                     })
                     .build());
 }

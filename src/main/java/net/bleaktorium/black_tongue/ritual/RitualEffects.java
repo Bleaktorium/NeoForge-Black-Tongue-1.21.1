@@ -1,23 +1,29 @@
 package net.bleaktorium.black_tongue.ritual;
 
 import net.bleaktorium.black_tongue.block.entity.RunicStoneBlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class RitualEffects {
 
-    public static void applyConsumableOutcome(RitualMath.RitualOutcome outcome, Player player,
+    public static void applyConsumableOutcome(RitualMath.RitualOutcome outcome, @Nullable Player player,
                                               List<RunicStoneBlockEntity> nestingStonesWithItems,
-                                              ItemStack rewardItem, int criticalSuccessCap) {
+                                              ItemStack rewardItem, int criticalSuccessCap,
+                                              Level level, BlockPos tablePos) {
         switch (outcome) {
             case CRITICAL_FAILURE -> {
                 consumeIngredients(nestingStonesWithItems);
                 emptyHunger(player);
-                player.addEffect(new MobEffectInstance(MobEffects.WITHER, 5 * 20, 0));
+                if (player != null) player.addEffect(new MobEffectInstance(MobEffects.WITHER, 5 * 20, 0));
             }
             case FAILURE_WITH_SIDE_EFFECT -> {
                 consumeIngredients(nestingStonesWithItems);
@@ -26,15 +32,15 @@ public class RitualEffects {
             case PARTIAL_SUCCESS_WITH_SIDE_EFFECT -> {
                 consumeIngredients(nestingStonesWithItems);
                 emptyHunger(player);
-                giveItem(player, rewardItem, 1);
+                dropReward(level, tablePos, rewardItem, 1);
             }
             case SUCCESS -> {
                 consumeIngredients(nestingStonesWithItems);
-                giveItem(player, rewardItem, 1);
+                dropReward(level, tablePos, rewardItem, 1);
             }
             case CRITICAL_SUCCESS -> {
-                int count = Math.min(3, criticalSuccessCap);
-                giveItem(player, rewardItem, count);
+
+                dropReward(level, tablePos, rewardItem, Math.min(3, criticalSuccessCap));
             }
         }
     }
@@ -45,15 +51,24 @@ public class RitualEffects {
         }
     }
 
-    private static void emptyHunger(Player player) {
+    private static void emptyHunger(@Nullable Player player) {
+        if (player == null) return;
         player.getFoodData().setFoodLevel(0);
         player.getFoodData().setSaturation(0f);
     }
 
-    private static void giveItem(Player player, ItemStack template, int count) {
-        ItemStack toGive = template.copyWithCount(count);
-        if (!player.getInventory().add(toGive)) {
-            player.drop(toGive, false);
+    private static void dropReward(Level level, BlockPos tablePos, ItemStack template, int count) {
+        ItemEntity entity = new ItemEntity(level,
+                tablePos.getX() + 0.5, tablePos.getY() + 1.2, tablePos.getZ() + 0.5,
+                template.copyWithCount(count));
+        entity.setDeltaMovement(0, 0.2, 0);
+        level.addFreshEntity(entity);
+    }
+
+    public static void applyFormationBackfire(List<ServerPlayer> players) {
+        for (ServerPlayer p : players) {
+            emptyHunger(p);
+            p.addEffect(new MobEffectInstance(MobEffects.WITHER, 5 * 20, 0));
         }
     }
 }

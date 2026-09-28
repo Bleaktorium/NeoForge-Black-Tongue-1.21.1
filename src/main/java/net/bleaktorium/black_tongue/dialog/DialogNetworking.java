@@ -1,8 +1,7 @@
 package net.bleaktorium.black_tongue.dialog;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
-import net.bleaktorium.black_tongue.coven.CovenQuestClientHandler;
-import net.bleaktorium.black_tongue.coven.CovenQuestSyncPacket;
+import net.bleaktorium.black_tongue.coven.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -60,5 +59,42 @@ public class DialogNetworking {
                         OpenWitchTradeServerHandler::handle
                 )
         );
+
+        registrar.playBidirectional(
+                CovenMenuSyncPacket.TYPE, CovenMenuSyncPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        CovenMenuClientHandler::handleSync, (packet, context) -> {})
+        );
+
+        registrar.playBidirectional(
+                CovenMenuAcceptPacket.TYPE, CovenMenuAcceptPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        (packet, context) -> {}, CovenMenuServerHandler::handleAccept)
+        );
+
+        registrar.playBidirectional(
+                CovenViewSyncPacket.TYPE, CovenViewSyncPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(CovenMenuClientHandler::handleViewSync,
+                        (packet, context) -> {})
+        );
+
+        registrar.playBidirectional(
+                CovenRenamePacket.TYPE, CovenRenamePacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        (packet, context) -> {}, CovenMenuServerHandler::handleRename)
+        );
+
+        registrar.playBidirectional(
+                CovenKickPacket.TYPE, CovenKickPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        (packet, context) -> {}, CovenMenuServerHandler::handleKick)
+        );
+
+        registrar.playBidirectional(
+                CovenLeaveOrAbandonPacket.TYPE, CovenLeaveOrAbandonPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        (packet, context) -> {}, CovenMenuServerHandler::handleLeaveOrAbandon)
+        );
     }
+
 }

@@ -24,7 +24,8 @@ public class YagaDialogTrees {
                 "A traveler, on my doorstep, offering me a gift... You are either desperate or foolish. What brings you to the likes of me?",
                 List.of(
                         new DialogOption("Ask about magic", p -> askAboutMagic()),
-                        new DialogOption("Leave", p -> null)
+                        new DialogOption("Leave", p -> null),
+                        covenOption()
                 )
         );
     }
@@ -92,6 +93,7 @@ public class YagaDialogTrees {
 
     // Stand-in
     private static DialogNode tradePlaceholder() {
+
         return null;
     }
 
@@ -112,13 +114,13 @@ public class YagaDialogTrees {
                             List<ResourceLocation> assigned = CovenPotionPool.rollThree();
                             CovenPlayerData newData = new CovenPlayerData(CovenRelationshipState.TASK_ACCEPTED, assigned);
                             p.setData(ModAttachments.COVEN_DATA.get(), newData);
-                            CovenSync.syncQuestToClient(p, newData); // NEW
+                            CovenSync.syncQuestToClient(p, newData);
                             return null;
                         }),
                         new DialogOption("Deny", p -> {
                             CovenPlayerData newData = new CovenPlayerData(CovenRelationshipState.TASK_DECLINED, List.of());
                             p.setData(ModAttachments.COVEN_DATA.get(), newData);
-                            CovenSync.syncQuestToClient(p, newData); // NEW
+                            CovenSync.syncQuestToClient(p, newData);
                             return null;
                         })
                 )
@@ -132,7 +134,8 @@ public class YagaDialogTrees {
                         DialogOption.quest(new DialogOption("Hand in the potion", YagaDialogTrees::handInPotion,
                                 CovenDialogChecks::isHoldingAssignedPotion)),
                         new DialogOption("Ask about magic", p -> askAboutMagic()),
-                        new DialogOption("Leave", p -> null)
+                        new DialogOption("Leave", p -> null),
+                        covenOption()
                 )
         );
     }
@@ -142,7 +145,8 @@ public class YagaDialogTrees {
                 "So, apple didn't roll away when it fell I see... Speak.",
                 List.of(
                         new DialogOption("Ask about magic", p -> askAboutMagic()),
-                        new DialogOption("Leave", p -> null)
+                        new DialogOption("Leave", p -> null),
+                        covenOption()
                 )
         );
     }
@@ -163,7 +167,7 @@ public class YagaDialogTrees {
     }
 
     private static DialogNode amuletDropNode(ServerPlayer player) {
-        ItemStack amulet = new ItemStack(ModItems.COVEN_SUMMONING_AMULET.get());
+        ItemStack amulet = new ItemStack(ModItems.YAGA_SUMMONING_AMULET.get());
         amulet.set(ModDataComponents.AMULET_BINDING.get(), new AmuletBinding(SummonedWitchType.COVEN_MOTHER, Optional.empty()));
 
         ItemEntity itemEntity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), amulet);
@@ -202,7 +206,8 @@ public class YagaDialogTrees {
         return new DialogNode(
                 "Yes?",
                 List.of(
-                        new DialogOption("Leave", p -> null)
+                        new DialogOption("Leave", p -> null),
+                        covenOption()
                 )
         );
     }
@@ -213,9 +218,16 @@ public class YagaDialogTrees {
                 List.of(
                         new DialogOption("Hand in the Ancient Journal", p -> openJournalTrade(p),
                                 CovenDialogChecks::isHoldingAncientJournal),
-                        new DialogOption("Leave", p -> null)
+                        new DialogOption("Leave", p -> null),
+                        covenOption()
                 )
         );
+    }
+
+    private static DialogOption covenOption() {
+        return new DialogOption("Show me our coven",
+                p -> { CovenMenus.openView(p); return null; },
+                p -> CovenSavedData.get(p.server).findContaining(p.getUUID()) != null);
     }
 
 }

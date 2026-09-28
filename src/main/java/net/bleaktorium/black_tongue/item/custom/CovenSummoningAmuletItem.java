@@ -16,9 +16,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 
 public class CovenSummoningAmuletItem extends Item {
 
@@ -107,5 +109,19 @@ public class CovenSummoningAmuletItem extends Item {
         }
 
         return bookshelfCount >= REQUIRED_BOOKSHELVES ? thronePos : null;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        AmuletBinding binding = stack.get(ModDataComponents.AMULET_BINDING.get());
+
+        if (binding == null) {
+            tooltip.add(Component.literal("Unbound").withStyle(ChatFormatting.RED));
+            tooltip.add(Component.literal("It answers to no one.").withStyle(ChatFormatting.GRAY));
+        } else {
+            tooltip.add(Component.literal("Bound to: ").withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(binding.displayName()).withStyle(ChatFormatting.GOLD)));
+        }
+        super.appendHoverText(stack, context, tooltip, flag);
     }
 }

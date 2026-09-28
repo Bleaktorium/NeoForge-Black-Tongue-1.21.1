@@ -24,4 +24,11 @@ public record AmuletBinding(SummonedWitchType type, Optional<String> witchName) 
             ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8), AmuletBinding::witchName,
             AmuletBinding::new
     );
+
+    public String displayName() {
+        return switch (type()) {
+            case COVEN_MOTHER -> "Coven Mother Yaga";
+            case COVENLESS_WITCH -> witchName().orElse("an unknown witch");
+        };
+    }
 }

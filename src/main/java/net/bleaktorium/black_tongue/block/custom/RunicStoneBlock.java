@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.bleaktorium.black_tongue.block.entity.RunicStoneBlockEntity;
 import net.bleaktorium.black_tongue.item.custom.RunicEtchingTool;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -66,12 +67,29 @@ public class RunicStoneBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!level.isClientSide && !state.is(newState.getBlock())
+                && level.getBlockEntity(pos) instanceof RunicStoneBlockEntity be) {
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.getStoredItem());
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
         if (stack.getItem() instanceof RunicEtchingTool) {
             if (!level.isClientSide) {
                 RuneType current = state.getValue(RUNE);
                 RuneType next = RuneType.values()[(current.ordinal() + 1) % RuneType.values().length];
+
+                if (current == RuneType.NESTING
+                        && level.getBlockEntity(pos) instanceof RunicStoneBlockEntity be
+                        && !be.getStoredItem().isEmpty()) {
+                    Containers.dropItemStack(level, pos.getX(), pos.getY() + 1, pos.getZ(), be.getStoredItem());
+                    be.setStoredItem(ItemStack.EMPTY);
+                }
+
                 level.setBlock(pos, state.setValue(RUNE, next), 3);
                 stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             }

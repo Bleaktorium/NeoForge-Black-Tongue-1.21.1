@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "phase=new_moon": {
+      "model": "black_tongue:block/moon_phase_rune_new_moon"
+    },
+    "phase=waxing_crescent": {
+      "model": "black_tongue:block/moon_phase_rune_waxing_crescent"
+    },
+    "phase=first_quarter": {
+      "model": "black_tongue:block/moon_phase_rune_first_quarter"
+    },
+    "phase=waxing_gibbous": {
+      "model": "black_tongue:block/moon_phase_rune_waxing_gibbous"
+    },
+    "phase=full_moon": {
+      "model": "black_tongue:block/moon_phase_rune_full_moon"
+    },
+    "phase=waning_gibbous": {
+      "model": "black_tongue:block/moon_phase_rune_waning_gibbous"
+    },
+    "phase=last_quarter": {
+      "model": "black_tongue:block/moon_phase_rune_last_quarter"
+    },
+    "phase=waning_crescent": {
+      "model": "black_tongue:block/moon_phase_rune_waning_crescent"
+    }
+  }
+}

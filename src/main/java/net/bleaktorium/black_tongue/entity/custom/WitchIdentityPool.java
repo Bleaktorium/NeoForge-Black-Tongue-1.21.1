@@ -20,7 +20,7 @@ public class WitchIdentityPool {
                     ResourceLocation.fromNamespaceAndPath("black_tongue", "textures/gui/trade/coven_trade_yaga.png"),
                     ResourceLocation.fromNamespaceAndPath("black_tongue", "geo/coven_mother.geo.json"),
                     ResourceLocation.fromNamespaceAndPath("black_tongue", "textures/entity/coven_mother.png"),
-                    false
+                    false, 40, 90, true
             )
     );
 

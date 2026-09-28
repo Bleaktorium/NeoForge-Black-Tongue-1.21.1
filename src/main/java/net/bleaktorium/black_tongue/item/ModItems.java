@@ -19,6 +19,8 @@ public class ModItems {
 
     public static final DeferredItem<BlockItem> RITUAL_TABLE_ITEM = ITEMS.registerSimpleBlockItem("ritual_table", ModBlocks.RITUAL_TABLE);
     public static final DeferredItem<BlockItem> RUNIC_STONE_ITEM = ITEMS.registerSimpleBlockItem("runic_stone", ModBlocks.RUNIC_STONE);
+    public static final DeferredItem<BlockItem> MOON_PHASE_RUNE_ITEM =
+            ITEMS.registerSimpleBlockItem("moon_phase_rune", ModBlocks.MOON_PHASE_RUNE);
 
     // DEBUG
     public static final DeferredItem<Item> OFFERING_GIFT = ITEMS.registerItem("offering_gift",
@@ -34,9 +36,11 @@ public class ModItems {
             new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationModifier(0f).build()));
 
     // YAGA
-    public static final DeferredItem<Item> YAGA_SUMMONING_AMULET = ITEMS.registerSimpleItem("yaga_summoning_amulet",
-            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<CovenSummoningAmuletItem> YAGA_SUMMONING_AMULET = ITEMS.registerItem(
+            "yaga_summoning_amulet", CovenSummoningAmuletItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> COVEN_THRONE = ITEMS.registerSimpleBlockItem("coven_throne", ModBlocks.COVEN_THRONE);
+
+    // COVEN
     public static final DeferredItem<CovenSummoningAmuletItem> COVEN_SUMMONING_AMULET = ITEMS.registerItem(
             "coven_summoning_amulet", CovenSummoningAmuletItem::new, new Item.Properties().stacksTo(1));
 

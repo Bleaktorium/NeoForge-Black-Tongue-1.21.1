@@ -1,12 +1,14 @@
 package net.bleaktorium.black_tongue.entity.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +22,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class CovenMotherCatEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    private int ticksUntilSwap = 45 * 20 + (int) (Math.random() * (75 * 20));
+    private int ticksUntilSwap = 10 * 20 + (int) (Math.random() * (75 * 20));
     private BlockPos throneCenter = null;
 
     public CovenMotherCatEntity(EntityType<? extends PathfinderMob> type, Level level) {
@@ -35,11 +37,13 @@ public class CovenMotherCatEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(0, new MoveTowardsRestrictionGoal(this, 0.7));
         this.goalSelector.addGoal(1, new RandomStrollGoal(this, 0.7));
     }
 
     public void setThroneCenter(BlockPos pos) {
         this.throneCenter = pos;
+        this.restrictTo(pos, CovenMotherEntity.WANDER_RADIUS);
     }
 
     @Override
@@ -68,6 +72,23 @@ public class CovenMotherCatEntity extends PathfinderMob implements GeoEntity {
 
         if (interactingPlayer != null) {
             CovenDialogOpener.open(interactingPlayer);
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if (throneCenter != null) {
+            tag.putLong("ThroneCenter", throneCenter.asLong());
+            this.restrictTo(throneCenter, CovenMotherEntity.WANDER_RADIUS);
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("ThroneCenter")) {
+            throneCenter = BlockPos.of(tag.getLong("ThroneCenter"));
         }
     }
 
