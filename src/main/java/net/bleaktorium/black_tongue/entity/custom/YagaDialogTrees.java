@@ -5,7 +5,6 @@ import net.bleaktorium.black_tongue.dialog.DialogNode;
 import net.bleaktorium.black_tongue.dialog.DialogOption;
 import net.bleaktorium.black_tongue.dialog.DialogSessionManager;
 import net.bleaktorium.black_tongue.item.ModItems;
-import net.bleaktorium.black_tongue.network.ModMessages;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,7 +24,6 @@ public class YagaDialogTrees {
                 "A traveler, on my doorstep, offering me a gift... You are either desperate or foolish. What brings you to the likes of me?",
                 List.of(
                         new DialogOption("Ask about magic", p -> askAboutMagic()),
-                        new DialogOption("I would like to trade", p -> tradePlaceholder()),
                         new DialogOption("Leave", p -> null)
                 )
         );
@@ -134,7 +132,6 @@ public class YagaDialogTrees {
                         DialogOption.quest(new DialogOption("Hand in the potion", YagaDialogTrees::handInPotion,
                                 CovenDialogChecks::isHoldingAssignedPotion)),
                         new DialogOption("Ask about magic", p -> askAboutMagic()),
-                        new DialogOption("I would like to trade", p -> tradePlaceholder()),
                         new DialogOption("Leave", p -> null)
                 )
         );
@@ -145,7 +142,6 @@ public class YagaDialogTrees {
                 "So, apple didn't roll away when it fell I see... Speak.",
                 List.of(
                         new DialogOption("Ask about magic", p -> askAboutMagic()),
-                        new DialogOption("I would like to trade", p -> tradePlaceholder()),
                         new DialogOption("Leave", p -> null)
                 )
         );
@@ -206,7 +202,6 @@ public class YagaDialogTrees {
         return new DialogNode(
                 "Yes?",
                 List.of(
-                        new DialogOption("I would like to trade", p -> tradePlaceholder()),
                         new DialogOption("Leave", p -> null)
                 )
         );
@@ -218,7 +213,6 @@ public class YagaDialogTrees {
                 List.of(
                         new DialogOption("Hand in the Ancient Journal", p -> openJournalTrade(p),
                                 CovenDialogChecks::isHoldingAncientJournal),
-                        new DialogOption("I would like to trade", p -> tradePlaceholder()),
                         new DialogOption("Leave", p -> null)
                 )
         );

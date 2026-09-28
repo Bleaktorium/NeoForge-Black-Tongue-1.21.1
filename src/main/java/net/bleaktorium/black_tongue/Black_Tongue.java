@@ -4,14 +4,12 @@ import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.block.entity.ModBlockEntities;
 import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
 import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
-import net.bleaktorium.black_tongue.coven.JournalTradeMenu;
 import net.bleaktorium.black_tongue.coven.ModAttachments;
 import net.bleaktorium.black_tongue.coven.ModDataComponents;
 import net.bleaktorium.black_tongue.entity.ModEntities;
 import net.bleaktorium.black_tongue.item.ModCreativeModeTabs;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.bleaktorium.black_tongue.item.menu.ModMenuTypes;
-import net.minecraft.world.inventory.MenuType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,8 +28,10 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.bleaktorium.black_tongue.entity.client.CovenMotherRenderer;
 import net.bleaktorium.black_tongue.entity.client.CovenlessWitchRenderer;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.bleaktorium.black_tongue.coven.JournalTradeScreen;
+import net.bleaktorium.black_tongue.coven.WitchTradeScreen;
+import net.bleaktorium.black_tongue.entity.client.CovenHutRenderer;
+import net.bleaktorium.black_tongue.entity.client.CovenMotherCatRenderer;
 
 
 @Mod(Black_Tongue.MOD_ID)
@@ -86,11 +86,14 @@ public class Black_Tongue {
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.COVEN_MOTHER.get(), CovenMotherRenderer::new);
             event.registerEntityRenderer(ModEntities.COVENLESS_WITCH.get(), CovenlessWitchRenderer::new);
+            event.registerEntityRenderer(ModEntities.COVEN_HUT.get(), CovenHutRenderer::new);
+            event.registerEntityRenderer(ModEntities.COVEN_MOTHER_CAT.get(), CovenMotherCatRenderer::new);
         }
 
         @SubscribeEvent
         public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
             event.register(ModMenuTypes.JOURNAL_TRADE.get(), JournalTradeScreen::new);
+            event.register(ModMenuTypes.WITCH_TRADE.get(), WitchTradeScreen::new);
         }
     }
 }

@@ -56,7 +56,8 @@ public class CovenSummoningAmuletItem extends Item {
     }
 
     private void summonCovenMother(Level level, BlockPos pos, Player player) {
-        if (!hasCovenEnvironment(level, pos)) {
+        BlockPos thronePos = findCovenThrone(level, pos);
+        if (thronePos == null) {
             if (player != null) {
                 player.displayClientMessage(Component.literal(
                         "This place lacks what a Coven Mother needs — a throne, and shelves enough to hold her knowledge."), true);
@@ -75,7 +76,8 @@ public class CovenSummoningAmuletItem extends Item {
         if (yaga == null) return;
 
         yaga.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-        yaga.setPersistenceRequired(); // no no to despawn
+        yaga.setPersistenceRequired();
+        yaga.setThroneCenter(thronePos);
         level.addFreshEntity(yaga);
     }
 
@@ -91,8 +93,8 @@ public class CovenSummoningAmuletItem extends Item {
         level.addFreshEntity(witch);
     }
 
-    private boolean hasCovenEnvironment(Level level, BlockPos center) {
-        boolean foundThrone = false;
+    private BlockPos findCovenThrone(Level level, BlockPos center) {
+        BlockPos thronePos = null;
         int bookshelfCount = 0;
 
         BlockPos min = center.offset(-ROOM_RADIUS, -ROOM_RADIUS, -ROOM_RADIUS);
@@ -100,10 +102,10 @@ public class CovenSummoningAmuletItem extends Item {
 
         for (BlockPos checkPos : BlockPos.betweenClosed(min, max)) {
             var block = level.getBlockState(checkPos).getBlock();
-            if (block == ModBlocks.COVEN_THRONE.get()) foundThrone = true;
+            if (block == ModBlocks.COVEN_THRONE.get()) thronePos = checkPos.immutable();
             if (block == Blocks.BOOKSHELF) bookshelfCount++;
         }
 
-        return foundThrone && bookshelfCount >= REQUIRED_BOOKSHELVES;
+        return bookshelfCount >= REQUIRED_BOOKSHELVES ? thronePos : null;
     }
 }

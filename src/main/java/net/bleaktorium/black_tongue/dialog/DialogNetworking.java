@@ -51,5 +51,14 @@ public class DialogNetworking {
                         (packet, context) -> {} // server never receives this
                 )
         );
+
+        registrar.playBidirectional(
+                OpenWitchTradePacket.TYPE,
+                OpenWitchTradePacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        (packet, context) -> {},
+                        OpenWitchTradeServerHandler::handle
+                )
+        );
     }
 }

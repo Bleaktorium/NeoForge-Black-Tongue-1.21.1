@@ -3,11 +3,14 @@ package net.bleaktorium.black_tongue.entity.custom;
 import net.bleaktorium.black_tongue.coven.AmuletBinding;
 import net.bleaktorium.black_tongue.coven.ModDataComponents;
 import net.bleaktorium.black_tongue.coven.SummonedWitchType;
+import net.bleaktorium.black_tongue.coven.WitchTradeMenu;
 import net.bleaktorium.black_tongue.item.custom.CovenSummoningAmuletItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -107,6 +110,14 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
             return InteractionResult.SUCCESS;
         }
 
-        return InteractionResult.PASS;
+        if (player instanceof ServerPlayer serverPlayer) {
+            String name = getIdentity().name();
+            serverPlayer.openMenu(new SimpleMenuProvider(
+                    (containerId, inv, p) -> new WitchTradeMenu(containerId, inv, name, (ServerPlayer) p),
+                    Component.literal(name)
+            ), buf -> buf.writeUtf(name));
+        }
+
+        return InteractionResult.SUCCESS;
     }
 }

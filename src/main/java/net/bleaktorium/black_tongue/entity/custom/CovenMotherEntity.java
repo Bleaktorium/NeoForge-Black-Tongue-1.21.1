@@ -27,6 +27,7 @@ public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public CovenMotherEntity(EntityType<? extends PathfinderMob> type, Level level) {
+
         super(type, level);
     }
 
@@ -34,6 +35,64 @@ public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
         return PathfinderMob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.0);
+    }
+
+    private int idleDespawnTicksRemaining = -1;
+
+    public void startIdleDespawnTimer(int ticks) {
+        this.idleDespawnTicksRemaining = ticks;
+    }
+
+    private void resetIdleDespawnTimer() {
+        if (idleDespawnTicksRemaining >= 0) {
+            idleDespawnTicksRemaining = 3 * 60 * 20;
+        }
+    }
+
+    private int ticksUntilSwap = rollSwapDelay();
+    private net.minecraft.core.BlockPos throneCenter = null;
+
+    private static int rollSwapDelay() {
+        return 45 * 20 + (int) (Math.random() * (75 * 20));
+    }
+
+    public void setThroneCenter(net.minecraft.core.BlockPos pos) {
+        this.throneCenter = pos;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) return;
+
+        if (!this.level().isClientSide && idleDespawnTicksRemaining > 0) {
+            idleDespawnTicksRemaining--;
+            if (idleDespawnTicksRemaining == 0) {
+                this.discard();
+                return;
+            }
+        }
+
+        if (throneCenter == null) return;
+        boolean playerNearby = !this.level().getEntitiesOfClass(net.minecraft.world.entity.player.Player.class,
+                this.getBoundingBox().inflate(4.0)).isEmpty();
+        if (playerNearby) return;
+
+        ticksUntilSwap--;
+        if (ticksUntilSwap <= 0) {
+            transformToCat();
+        }
+    }
+
+    private void transformToCat() {
+        CovenMotherCatEntity cat = net.bleaktorium.black_tongue.entity.ModEntities.COVEN_MOTHER_CAT.get().create(this.level());
+        if (cat == null) return;
+
+        cat.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0);
+        cat.setThroneCenter(throneCenter);
+        cat.setPersistenceRequired();
+        this.level().addFreshEntity(cat);
+        this.discard();
     }
 
     @Override
@@ -54,6 +113,7 @@ public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        resetIdleDespawnTimer();
         if (!this.level().isClientSide && player instanceof ServerPlayer serverPlayer) {
             CovenPlayerData data = serverPlayer.getData(ModAttachments.COVEN_DATA.get());
 
@@ -70,4 +130,6 @@ public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
         }
         return InteractionResult.SUCCESS;
     }
+
+
 }

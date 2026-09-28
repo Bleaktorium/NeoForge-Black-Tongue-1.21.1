@@ -212,6 +212,7 @@ public class DialogScreen extends Screen {
 
         int tbx = panelX + TRADE_BTN_X, tby = panelY + TRADE_BTN_Y;
         if (mouseX >= tbx && mouseX < tbx + TRADE_BTN_W && mouseY >= tby && mouseY < tby + TRADE_BTN_H) {
+            ModMessages.sendToServer(new OpenWitchTradePacket("Coven Mother Yaga"));
             return true;
         }
 
