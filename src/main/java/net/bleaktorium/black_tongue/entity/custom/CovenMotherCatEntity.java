@@ -22,7 +22,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class CovenMotherCatEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    private int ticksUntilSwap = 10 * 20 + (int) (Math.random() * (75 * 20));
+    private int ticksUntilSwap = 45 * 20 + (int) (Math.random() * (75 * 20));
     private BlockPos throneCenter = null;
 
     public CovenMotherCatEntity(EntityType<? extends PathfinderMob> type, Level level) {
@@ -112,6 +112,7 @@ public class CovenMotherCatEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
+
         return cache;
     }
 }

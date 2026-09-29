@@ -38,7 +38,8 @@ public class ModItems {
     // YAGA
     public static final DeferredItem<CovenSummoningAmuletItem> YAGA_SUMMONING_AMULET = ITEMS.registerItem(
             "yaga_summoning_amulet", CovenSummoningAmuletItem::new, new Item.Properties().stacksTo(1));
-    public static final DeferredItem<BlockItem> COVEN_THRONE = ITEMS.registerSimpleBlockItem("coven_throne", ModBlocks.COVEN_THRONE);
+    public static final DeferredItem<BlockItem> COVEN_THRONE = ITEMS.registerSimpleBlockItem(
+            "coven_throne", ModBlocks.COVEN_THRONE);
 
     // COVEN
     public static final DeferredItem<CovenSummoningAmuletItem> COVEN_SUMMONING_AMULET = ITEMS.registerItem(
@@ -52,6 +53,10 @@ public class ModItems {
             ITEMS.registerItem("cauldron_scrub", CauldronScrubItem::new, new Item.Properties().durability(16));
     public static final DeferredItem<CauldronTerminatorItem> CAULDRON_TERMINATOR =
             ITEMS.registerItem("cauldron_terminator", CauldronTerminatorItem::new, new Item.Properties());
+
+    // FARMING
+    public static final DeferredItem<BlockItem> MORTAR_PESTLE = ITEMS.registerSimpleBlockItem(
+            "mortar_pestle", ModBlocks.MORTAR_PESTLE);
 
 
 }

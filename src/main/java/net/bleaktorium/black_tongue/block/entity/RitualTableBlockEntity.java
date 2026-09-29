@@ -37,7 +37,6 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -57,7 +56,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
     private static final int GUEST_LINGER_TICKS = 15 * 20;
     private static final int GUEST_SAFETY_TICKS = 2 * 60 * 20;
 
-    // One stone the ritual is keeping an eye on.
     private static class Watched {
         final BlockPos pos;
         final BlockState state;
@@ -73,14 +71,11 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         }
     }
 
-    // What one moon seat looks like at the moment the table is clicked.
     private record SeatView(BlockPos pos, BlockPos offset, MoonPhase phase, ItemStack stored,
                             AmuletBinding binding, WitchIdentity witch, ServerPlayer standing) { }
 
-    // A moon seat whose witch will be summoned once the ritual really starts.
     private record WitchSeat(BlockPos pos, AmuletBinding binding) { }
 
-    // A witch summoned for this ritual.
     private static class Guest {
         final UUID id;
         final BlockPos seatPos;
@@ -92,7 +87,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         }
     }
 
-    // A player standing on a seat for this ritual.
     private static class PlayerSeat {
         final UUID id;
         final BlockPos seatPos;
@@ -104,8 +98,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         }
     }
 
-    // Live ritual state. Deliberately NOT saved: an interrupted ritual just
-    // evaporates, and nothing is consumed until the finale.
     private boolean casting = false;
     private int ticksElapsed = 0;
     private UUID initiatorId = null;
@@ -123,7 +115,7 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         super(ModBlockEntities.RITUAL_TABLE_BE.get(), pos, state);
     }
 
-    // --- GeckoLib ---
+    //GeckoLib
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, state -> state.setAndContinue(IDLE)));
@@ -136,7 +128,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
 
     public boolean isCasting() { return casting; }
 
-    // Hook for the future Orb of Peace.
     public void addStabilityBonus(double amount) {
         if (casting) stabilityModifier += amount;
     }
@@ -145,7 +136,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         return Mth.clamp(baseStability + stabilityModifier, 0.0, 100.0);
     }
 
-    // Which witch does this amulet call? null if it isn't a usable bound amulet.
     private static WitchIdentity identityFor(AmuletBinding binding) {
         if (binding == null) return null;
         String name = switch (binding.type()) {
@@ -155,11 +145,9 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         if (name == null) return null;
 
         WitchIdentity identity = WitchIdentityPool.getByName(name);
-        // getByName falls back to the first entry for unknown names, so check it really matched
         return identity.name().equals(name) ? identity : null;
     }
 
-    // The column of air above a rune: a player whose feet are in it is "on the seat".
     private static AABB seatColumn(BlockPos seat) {
         return new AABB(seat.getX(), seat.getY() + 0.9, seat.getZ(),
                 seat.getX() + 1, seat.getY() + 3.0, seat.getZ() + 1);
@@ -174,9 +162,7 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         return null;
     }
 
-    // ---------------------------------------------------------------
     // READING THE CIRCLE
-    // ---------------------------------------------------------------
     private List<SeatView> readSeats(ServerLevel serverLevel) {
         List<SeatView> seats = new ArrayList<>();
         for (BlockPos offset : RitualTableBlock.RING_OFFSETS) {
@@ -188,8 +174,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             ItemStack stored = be.getStoredItem();
             AmuletBinding binding = stored.get(ModDataComponents.AMULET_BINDING.get());
             WitchIdentity witch = identityFor(binding);
-            // A seat holding an amulet belongs to that witch. Only an empty
-            // seat can be taken by a player standing on it.
             ServerPlayer standing = stored.isEmpty() ? playerStandingOn(serverLevel, stonePos) : null;
 
             seats.add(new SeatView(stonePos, offset, stoneState.getValue(MoonPhaseRuneBlock.PHASE),
@@ -226,10 +210,9 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         for (RitualRecipe recipe : RitualRecipe.ALL) {
             if (missingFor(recipe, seats, initiator).isEmpty()) return recipe;
         }
-        return RitualRecipe.OFFERING_GIFT; // unreachable: the Gift has no seat requirements
+        return RitualRecipe.OFFERING_GIFT;
     }
 
-    // If the circle looks like a Formation attempt that fell short, say what's missing.
     private static String hintFor(List<SeatView> seats, ServerPlayer initiator) {
         if (!SHOW_RITUAL_MATH) return "";
         boolean looksLikeAttempt = seats.stream().anyMatch(s ->
@@ -239,9 +222,7 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         return missing.isEmpty() ? "" : "Coven Formation still needs " + String.join(" and ", missing) + ".";
     }
 
-    // ---------------------------------------------------------------
-    // INITIATION: read the circle, pick the recipe, snapshot, start the clock
-    // ---------------------------------------------------------------
+    // INITIATION
     public void beginRitual(ServerPlayer player) {
         if (!(level instanceof ServerLevel serverLevel)) return;
 
@@ -267,7 +248,7 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             }
         }
 
-        // ---- tally power and stability under the chosen recipe ----
+        // tally power and stability under the chosen recipe
         int amp = RitualMath.PLAYER_BASE_AMPLIFICATION;
         double stabilitySum = RitualMath.PLAYER_BASE_STABILITY;
         int contributors = 1;
@@ -278,13 +259,12 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         List<RitualParticipant> people = new ArrayList<>();
         Set<String> seatedWitches = new HashSet<>();
 
-        people.add(RitualParticipant.player(player)); // whoever clicks is always in it
+        people.add(RitualParticipant.player(player));
 
         for (SeatView seat : seats) {
             snapshot.add(new Watched(seat.pos(), serverLevel.getBlockState(seat.pos()), seat.stored().copy(), false));
 
             if (seat.witch() != null && seatedWitches.add(seat.witch().name())) {
-                // A witch in the seat: her own numbers join the ritual.
                 amp += seat.witch().ritualAmplification();
                 stabilitySum += seat.witch().ritualStability();
                 contributors++;
@@ -298,11 +278,8 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
                     contributors++;
                     people.add(RitualParticipant.player(seat.standing()));
                 }
-                // The initiator on a seat adds nothing extra (they ARE the base
-                // numbers), but they are watched: stepping off is a tamper.
+
             } else {
-                // An empty seat, or a witch already seated elsewhere (she can't
-                // sit twice): a 0-stability drag.
                 contributors++;
             }
         }
@@ -314,7 +291,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
 
             switch (stoneState.getValue(RunicStoneBlock.RUNE)) {
                 case NESTING -> {
-                    // Offerings only count for recipes that use them.
                     if (recipe.usesOfferings()
                             && level.getBlockEntity(stonePos) instanceof RunicStoneBlockEntity nestBe
                             && RitualIngredients.isValidOffering(nestBe.getStoredItem())) {
@@ -335,8 +311,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             }
         }
 
-        // Gates are decided NOW, so a ritual that can't work never wastes a
-        // cast or a witch. Hints go to chat since the action bar cuts long text.
         if (offerings < recipe.minOfferings()) {
             player.displayClientMessage(Component.literal("The ritual needs an offering."), true);
             String hint = hintFor(seats, player);
@@ -365,7 +339,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         participants.clear();
         participants.addAll(people);
 
-        // Only now do the witches arrive, standing on their seats.
         guests.clear();
         for (WitchSeat ws : witchSeats) {
             Entity guest = RitualGuests.summon(serverLevel, ws.pos().above(), worldPosition, ws.binding(), GUEST_SAFETY_TICKS);
@@ -378,13 +351,10 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         player.displayClientMessage(Component.literal("The ritual begins: " + recipe.name() + "." + math), true);
     }
 
-    // ---------------------------------------------------------------
-    // THE CAST: runs every server tick while a ritual is active
-    // ---------------------------------------------------------------
+    // THE CAST
     public void tickServer() {
         if (!casting || !(level instanceof ServerLevel serverLevel)) return;
 
-        // A broken core circle tears the whole ritual apart.
         if (!RitualTableBlock.isCoreCircleValid(serverLevel, worldPosition)) {
             resolve(serverLevel, RitualMath.RitualOutcome.CRITICAL_FAILURE, " (the circle was broken)");
             return;
@@ -399,8 +369,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             }
         }
 
-        // A witch who was killed or driven off leaves a hole in the ritual.
-        // The first few ticks are skipped so a fresh guest can't be missed.
         if (ticksElapsed >= 5) {
             for (Guest g : guests) {
                 if (g.lostPenaltyApplied || !serverLevel.hasChunkAt(g.seatPos)) continue;
@@ -413,7 +381,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             }
         }
 
-        // Same for a player who steps off their seat, logs off, or dies.
         for (PlayerSeat ps : playerSeats) {
             if (ps.lostPenaltyApplied || !serverLevel.hasChunkAt(ps.seatPos)) continue;
             ServerPlayer p = serverLevel.getServer().getPlayerList().getPlayer(ps.id);
@@ -429,7 +396,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         ticksElapsed++;
         double stability = currentStability();
 
-        // Omens, once a second: the less stable, the likelier a strike near the circle.
         if (ticksElapsed % 20 == 0) {
             double chance = Math.max(0.0, (60.0 - stability) / 60.0) * 0.6;
             if (serverLevel.getRandom().nextDouble() < chance) {
@@ -454,20 +420,17 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
 
     private boolean hasChanged(ServerLevel serverLevel, Watched w) {
         if (serverLevel.getBlockState(w.pos) != w.state) return true;
-        if (w.item.isEmpty()) return false; // additions to an empty seat are ignored: they can't help
+        if (w.item.isEmpty()) return false;
         ItemStack current = serverLevel.getBlockEntity(w.pos) instanceof RunicStoneBlockEntity be
                 ? be.getStoredItem() : ItemStack.EMPTY;
         return !ItemStack.matches(current, w.item);
     }
 
-    // ---------------------------------------------------------------
     // THE FINALE
-    // ---------------------------------------------------------------
     private void finish(ServerLevel serverLevel) {
         RitualMath.RitualOutcome outcome = RitualMath.rollOutcome(currentStability(), serverLevel.getRandom());
         String note = "";
 
-        // A missing offering caps the result at a failure (only the Gift has offerings).
         boolean offeringMissing = false;
         for (Watched w : watched) {
             if (w.offering && offeringGone(w)) {
@@ -499,7 +462,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             resolveOfferingGift(serverLevel, outcome, initiator);
         }
 
-        // Same visual language for every recipe: lightning for a bad result, a burst for the best.
         switch (outcome) {
             case CRITICAL_FAILURE, FAILURE_WITH_SIDE_EFFECT -> strikeVisual(serverLevel, worldPosition);
             case CRITICAL_SUCCESS -> serverLevel.sendParticles(ParticleTypes.TOTEM_OF_UNDYING,

@@ -54,7 +54,8 @@ public class CovenHutEntity extends PathfinderMob implements GeoEntity {
     }
 
     public HutState getState() {
-        return HutState.values()[this.entityData.get(DATA_STATE)];
+        return HutState.values()[
+                this.entityData.get(DATA_STATE)];
     }
 
     public void transitionTo(HutState newState) {
@@ -62,8 +63,10 @@ public class CovenHutEntity extends PathfinderMob implements GeoEntity {
         this.stateTicks = 0;
     }
 
-    public void setTargetSeed(ItemEntity seed) { this.targetSeed = seed; }
-    public ItemEntity getTargetSeed() { return targetSeed; }
+    public void setTargetSeed(ItemEntity seed) {
+        this.targetSeed = seed; }
+    public ItemEntity getTargetSeed() {
+        return targetSeed; }
 
     @Override
     protected void registerGoals() {
@@ -170,9 +173,7 @@ public class CovenHutEntity extends PathfinderMob implements GeoEntity {
         @Override
         public boolean canUse() {
             if (hut.getState() != CovenHutEntity.HutState.WANDERING) return false;
-            ItemEntity found = findNearestSeed();//temp
-            System.out.println("canUse check — found: " + found);//temp
-            return found != null;
+            return findNearestSeed() != null;
         }
 
         private ItemEntity findNearestSeed() {

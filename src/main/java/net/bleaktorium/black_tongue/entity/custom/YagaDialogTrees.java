@@ -3,7 +3,6 @@ package net.bleaktorium.black_tongue.entity.custom;
 import net.bleaktorium.black_tongue.coven.*;
 import net.bleaktorium.black_tongue.dialog.DialogNode;
 import net.bleaktorium.black_tongue.dialog.DialogOption;
-import net.bleaktorium.black_tongue.dialog.DialogSessionManager;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -89,12 +88,6 @@ public class YagaDialogTrees {
                         DialogOption.back()
                 )
         );
-    }
-
-    // Stand-in
-    private static DialogNode tradePlaceholder() {
-
-        return null;
     }
 
     public static DialogNode joinCovenIntro() {

@@ -1,10 +1,7 @@
 package net.bleaktorium.black_tongue.block;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
-import net.bleaktorium.black_tongue.block.custom.MoonPhaseRuneBlock;
-import net.bleaktorium.black_tongue.block.custom.RitualTableBlock;
-import net.bleaktorium.black_tongue.block.custom.RunicStoneBlock;
-import net.bleaktorium.black_tongue.block.custom.WitchsCauldronBlock;
+import net.bleaktorium.black_tongue.block.custom.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -28,4 +25,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<MoonPhaseRuneBlock> MOON_PHASE_RUNE = BLOCKS.register("moon_phase_rune",
             () -> new MoonPhaseRuneBlock(BlockBehaviour.Properties.of().strength(2.0f)));
+
+    public static final DeferredBlock<MortarAndPestleBlock> MORTAR_PESTLE = BLOCKS.register("mortar_pestle",
+            () -> new MortarAndPestleBlock(BlockBehaviour.Properties.of().strength(3.0f).noOcclusion()));
 }

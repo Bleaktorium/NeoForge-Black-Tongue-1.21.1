@@ -4,7 +4,6 @@ import net.bleaktorium.black_tongue.coven.CovenPlayerData;
 import net.bleaktorium.black_tongue.coven.ModAttachments;
 import net.bleaktorium.black_tongue.dialog.DialogHandler;
 import net.bleaktorium.black_tongue.dialog.DialogNode;
-import net.bleaktorium.black_tongue.dialog.DialogOption;
 import net.bleaktorium.black_tongue.dialog.DialogSessionManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -12,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.PathfinderMob;
@@ -25,7 +23,6 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import java.util.List;
 
 public class CovenMotherEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);

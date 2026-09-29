@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue;
 
 import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.block.entity.ModBlockEntities;
+import net.bleaktorium.black_tongue.block.entity.client.MortarAndPestleRenderer;
 import net.bleaktorium.black_tongue.block.entity.client.RitualTableRenderer;
 import net.bleaktorium.black_tongue.block.entity.client.WitchsCauldronRenderer;
 import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
@@ -9,6 +10,7 @@ import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
 import net.bleaktorium.black_tongue.coven.ModAttachments;
 import net.bleaktorium.black_tongue.coven.ModDataComponents;
 import net.bleaktorium.black_tongue.entity.ModEntities;
+import net.bleaktorium.black_tongue.farming.HerbGrindingRecipes;
 import net.bleaktorium.black_tongue.item.ModCreativeModeTabs;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.bleaktorium.black_tongue.item.menu.ModMenuTypes;
@@ -54,6 +56,7 @@ public class Black_Tongue {
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         CauldronIngredients.bootstrap();
         CauldronRecipes.bootstrap();
+        HerbGrindingRecipes.bootstrap();
         ModAttachments.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
@@ -92,6 +95,7 @@ public class Black_Tongue {
             event.registerEntityRenderer(ModEntities.COVEN_MOTHER_CAT.get(), CovenMotherCatRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.RITUAL_TABLE_BE.get(), context -> new RitualTableRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.WITCHS_CAULDRON_BE.get(), context -> new WitchsCauldronRenderer());
+            event.registerBlockEntityRenderer(ModBlockEntities.MORTAR_AND_PESTLE_BE.get(), context -> new MortarAndPestleRenderer());
         }
 
         @SubscribeEvent

@@ -25,5 +25,9 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("witchs_cauldron_be",
                     () -> BlockEntityType.Builder.of(WitchsCauldronBlockEntity::new, ModBlocks.WITCHS_CAULDRON.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MortarAndPestleBlockEntity>> MORTAR_AND_PESTLE_BE =
+            BLOCK_ENTITIES.register("mortar_and_pestle_be",
+                    () -> BlockEntityType.Builder.of(MortarAndPestleBlockEntity::new, ModBlocks.MORTAR_PESTLE.get()).build(null));
+
 
 }

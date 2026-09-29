@@ -2,6 +2,8 @@ package net.bleaktorium.black_tongue.dialog;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
 import net.bleaktorium.black_tongue.coven.*;
+import net.bleaktorium.black_tongue.farming.MortarGrindPacket;
+import net.bleaktorium.black_tongue.farming.MortarGrindServerHandler;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -95,6 +97,10 @@ public class DialogNetworking {
                 new DirectionalPayloadHandler<>(
                         (packet, context) -> {}, CovenMenuServerHandler::handleLeaveOrAbandon)
         );
+
+        registrar.playBidirectional(
+                MortarGrindPacket.TYPE, MortarGrindPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>((packet, context) -> {}, MortarGrindServerHandler::handle));
     }
 
 }
