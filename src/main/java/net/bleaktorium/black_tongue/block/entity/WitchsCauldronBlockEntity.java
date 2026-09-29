@@ -14,12 +14,21 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+import software.bernie.geckolib.animation.AnimationController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WitchsCauldronBlockEntity extends BlockEntity {
+public class WitchsCauldronBlockEntity extends BlockEntity implements GeoBlockEntity {
+    private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     private Player lastInteractingPlayer = null;
 
@@ -37,6 +46,10 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
 
     private Stage stage = Stage.ESTABLISHING_BASE;
     private boolean active = false;
+    private boolean dirty = false;
+    public boolean isDirty() {
+        return dirty; }
+
 
     private int currentTemperature = 0;
     private int pendingDelta = 0;
@@ -58,8 +71,21 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         super(ModBlockEntities.WITCHS_CAULDRON_BE.get(), pos, state);
     }
 
-    public void startBrewing() { active = true; }
-    public boolean isActive() { return active; }
+    private void syncToClients() {
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    public void startBrewing() {
+        if (dirty) return;
+        active = true;
+        syncToClients();
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 
     public boolean tryAddIngredient(Item item) {
         if (!active) return false;
@@ -89,6 +115,7 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
             case ESTABLISHING_BASE -> {
                 currentTemperature += pendingDelta;
                 pendingDelta = 0;
+                syncToClients();
                 if (baseTemperature == null) {
                     baseTemperature = currentTemperature;
                     stage = Stage.RECIPE_FIRST_HALF;
@@ -154,6 +181,7 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
 
         lastResult = "Wave " + (waveIndex + 1) + "/" + matchedRecipe.waveCount() +
                 " — shifted to " + candidate + " (target: " + baseTemperature + ").";
+        syncToClients();
     }
 
     private void evaluateWave() {
@@ -167,6 +195,7 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
 
         lastResult = "Wave " + (waveIndex + 1) + " result: " + String.format("%.0f%%", accuracy * 100);
         waveIndex++;
+        syncToClients();
         beginNextWave();
     }
 
@@ -181,11 +210,23 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         }
 
         stage = Stage.DONE;
+        dirty = true;
         lastResult = "Brewing complete! Average accuracy: " +
                 String.format("%.0f%%", averageAccuracy * 100) + " — " + outcome;
+        syncToClients();
     }
 
     public void tickWave() {
+
+        if (level instanceof net.minecraft.server.level.ServerLevel serverLevel && active && !dirty) {
+            if (level.getGameTime() % 8 == 0) {
+                serverLevel.sendParticles(
+                        new net.minecraft.core.particles.DustParticleOptions(temperatureColor(currentTemperature), 1.0f),
+                        worldPosition.getX() + 0.5, worldPosition.getY() + 1.1, worldPosition.getZ() + 0.5,
+                        2, 0.2, 0.05, 0.2, 0.01);
+            }
+        }
+
         if (stage != Stage.BREWING_WAVES || waveTicksRemaining <= 0) {
             hideBossBar();
             return;
@@ -197,6 +238,19 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         if (waveTicksRemaining <= 0) {
             evaluateWave();
         }
+    }
+
+    private static org.joml.Vector3f temperatureColor(int temp) {
+        temp = Math.max(-3, Math.min(3, temp));
+        return switch (temp) {
+            case -3 -> new org.joml.Vector3f(0.16f, 0.27f, 0.78f);
+            case -2 -> new org.joml.Vector3f(0.24f, 0.43f, 0.86f);
+            case -1 -> new org.joml.Vector3f(0.35f, 0.63f, 0.82f);
+            case 0 -> new org.joml.Vector3f(0.59f, 0.75f, 0.75f);
+            case 1 -> new org.joml.Vector3f(0.86f, 0.67f, 0.35f);
+            case 2 -> new org.joml.Vector3f(0.88f, 0.47f, 0.24f);
+            default -> new org.joml.Vector3f(0.82f, 0.24f, 0.18f); // 3
+        };
     }
 
     private void updateBossBar() {
@@ -246,12 +300,13 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
 
 
     public void terminateBrewing() {
-        if (stage != Stage.BREWING_WAVES) return; // only meaningful mid-brew
+        if (stage != Stage.BREWING_WAVES) return;
         lastResult = "The brewing was safely stopped.";
         resetProgress();
     }
 
     public void scrub() {
+
         resetProgress();
     }
 
@@ -259,6 +314,7 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         hideBossBar();
         stage = Stage.ESTABLISHING_BASE;
         active = false;
+        dirty = false;
         currentTemperature = 0;
         pendingDelta = 0;
         baseTemperature = null;
@@ -266,10 +322,73 @@ public class WitchsCauldronBlockEntity extends BlockEntity {
         matchedRecipe = null;
         waveIndex = 0;
         waveAccuracies.clear();
+        syncToClients();
     }
 
-    public Stage getStage() { return stage; }
-    public int getCurrentTemperature() { return currentTemperature; }
-    public Integer getBaseTemperature() { return baseTemperature; }
-    public String getLastResult() { return lastResult; }
+    public Stage getStage() {
+        return stage; }
+
+    public int getCurrentTemperature() {
+        return currentTemperature; }
+
+    public Integer getBaseTemperature() {
+        return baseTemperature; }
+
+    public String getLastResult() {
+        return lastResult; }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, state -> state.setAndContinue(IDLE)));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        net.minecraft.nbt.CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.handleUpdateTag(tag, registries);
+        loadAdditional(tag, registries);
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putString("Stage", stage.name());
+        tag.putBoolean("Active", active);
+        tag.putBoolean("Dirty", dirty);
+        tag.putInt("CurrentTemperature", currentTemperature);
+        tag.putInt("PendingDelta", pendingDelta);
+        if (baseTemperature != null) {
+            tag.putInt("BaseTemperature", baseTemperature);
+        }
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("Stage")) {
+            Stage loaded = Stage.valueOf(tag.getString("Stage"));
+            stage = (loaded == Stage.ESTABLISHING_BASE || loaded == Stage.DONE) ? loaded : Stage.ESTABLISHING_BASE;
+        }
+        active = tag.getBoolean("Active");
+        dirty = tag.getBoolean("Dirty");
+        currentTemperature = tag.getInt("CurrentTemperature");
+        pendingDelta = tag.getInt("PendingDelta");
+        baseTemperature = tag.contains("BaseTemperature") ? tag.getInt("BaseTemperature") : null;
+    }
 }

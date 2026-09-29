@@ -34,11 +34,13 @@ public class WitchsCauldronBlock extends BaseEntityBlock {
     public static final MapCodec<WitchsCauldronBlock> CODEC = simpleCodec(WitchsCauldronBlock::new);
 
     public WitchsCauldronBlock(BlockBehaviour.Properties properties) {
+
         super(properties);
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
+
         return CODEC;
     }
 
@@ -50,7 +52,8 @@ public class WitchsCauldronBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -59,6 +62,13 @@ public class WitchsCauldronBlock extends BaseEntityBlock {
         if (stack.getItem() == Items.WATER_BUCKET
                 && level.getBlockEntity(pos) instanceof WitchsCauldronBlockEntity cauldron
                 && !cauldron.isActive()) {
+
+            if (cauldron.isDirty()) {
+                if (!level.isClientSide) {
+                    player.displayClientMessage(Component.literal("This cauldron needs a scrub before it can be used again."), true);
+                }
+                return ItemInteractionResult.SUCCESS;
+            }
 
             if (!level.isClientSide) {
                 cauldron.startBrewing();

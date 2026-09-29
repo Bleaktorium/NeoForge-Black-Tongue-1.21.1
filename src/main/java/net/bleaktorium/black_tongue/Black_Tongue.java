@@ -3,6 +3,7 @@ package net.bleaktorium.black_tongue;
 import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.block.entity.ModBlockEntities;
 import net.bleaktorium.black_tongue.block.entity.client.RitualTableRenderer;
+import net.bleaktorium.black_tongue.block.entity.client.WitchsCauldronRenderer;
 import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
 import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
 import net.bleaktorium.black_tongue.coven.ModAttachments;
@@ -90,6 +91,7 @@ public class Black_Tongue {
             event.registerEntityRenderer(ModEntities.COVEN_HUT.get(), CovenHutRenderer::new);
             event.registerEntityRenderer(ModEntities.COVEN_MOTHER_CAT.get(), CovenMotherCatRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.RITUAL_TABLE_BE.get(), context -> new RitualTableRenderer());
+            event.registerBlockEntityRenderer(ModBlockEntities.WITCHS_CAULDRON_BE.get(), context -> new WitchsCauldronRenderer());
         }
 
         @SubscribeEvent
