@@ -30,6 +30,9 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.COVEN_SUMMONING_AMULET.get());
                         output.accept(ModItems.MOON_PHASE_RUNE_ITEM.get());
                         output.accept(ModItems.MORTAR_PESTLE.get());
+                        output.accept(ModItems.MOTHLEAF.get());
+                        output.accept(ModItems.MOTHLEAF_SEEDS.get());
+                        output.accept(ModItems.MOTHLEAF_DUST.get());
                     })
                     .build());
 }

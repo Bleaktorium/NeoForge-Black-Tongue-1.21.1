@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue.block;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
 import net.bleaktorium.black_tongue.block.custom.*;
+import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -28,4 +29,13 @@ public class ModBlocks {
 
     public static final DeferredBlock<MortarAndPestleBlock> MORTAR_PESTLE = BLOCKS.register("mortar_pestle",
             () -> new MortarAndPestleBlock(BlockBehaviour.Properties.of().strength(3.0f).noOcclusion()));
+
+    public static final DeferredBlock<HerbCropBlock> MOTHLEAF_CROP = BLOCKS.register("mothleaf_crop",
+            () -> new HerbCropBlock(BlockBehaviour.Properties.of()
+                    .noCollission()
+                    .randomTicks()
+                    .instabreak()
+                    .sound(net.minecraft.world.level.block.SoundType.CROP)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY),
+                    3, ModItems.MOTHLEAF_SEEDS));
 }

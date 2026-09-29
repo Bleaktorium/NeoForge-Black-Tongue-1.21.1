@@ -54,9 +54,6 @@ public class Black_Tongue {
         ModItems.ITEMS.register(modEventBus);
         ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
-        CauldronIngredients.bootstrap();
-        CauldronRecipes.bootstrap();
-        HerbGrindingRecipes.bootstrap();
         ModAttachments.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
@@ -66,7 +63,9 @@ public class Black_Tongue {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-
+        CauldronIngredients.bootstrap();
+        CauldronRecipes.bootstrap();
+        HerbGrindingRecipes.bootstrap();
     }
 
 
@@ -84,6 +83,11 @@ public class Black_Tongue {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(
+                        ModBlocks.MOTHLEAF_CROP.get(),
+                        net.minecraft.client.renderer.RenderType.cutout());
+            });
 
         }
 

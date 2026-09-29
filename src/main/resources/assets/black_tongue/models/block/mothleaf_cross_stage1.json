@@ -1,0 +1,4 @@
+{
+  "parent": "block/cross",
+  "textures": { "cross": "black_tongue:block/mothleaf_cross_stage1" }
+}

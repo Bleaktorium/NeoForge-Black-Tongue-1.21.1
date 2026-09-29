@@ -13,7 +13,7 @@ public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Black_Tongue.MOD_ID);
 
 
-    // RITUAL
+    // RITUAL =================================================================================================
     public static final DeferredItem<RunicEtchingTool> RUNIC_ETCHING_TOOL = ITEMS.registerItem("runic_etching_tool",
             RunicEtchingTool::new, new Item.Properties().durability(64));
 
@@ -22,7 +22,7 @@ public class ModItems {
     public static final DeferredItem<BlockItem> MOON_PHASE_RUNE_ITEM =
             ITEMS.registerSimpleBlockItem("moon_phase_rune", ModBlocks.MOON_PHASE_RUNE);
 
-    // DEBUG
+    // DEBUG ==================================================================================================
     public static final DeferredItem<Item> OFFERING_GIFT = ITEMS.registerItem("offering_gift",
             properties -> new Item(properties.food(
                     new FoodProperties.Builder()
@@ -35,17 +35,15 @@ public class ModItems {
             YagaMemoryWipeItem::new,
             new Item.Properties().food(new FoodProperties.Builder().nutrition(0).saturationModifier(0f).build()));
 
-    // YAGA
+    // COVEN ==================================================================================================
     public static final DeferredItem<CovenSummoningAmuletItem> YAGA_SUMMONING_AMULET = ITEMS.registerItem(
             "yaga_summoning_amulet", CovenSummoningAmuletItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> COVEN_THRONE = ITEMS.registerSimpleBlockItem(
             "coven_throne", ModBlocks.COVEN_THRONE);
-
-    // COVEN
     public static final DeferredItem<CovenSummoningAmuletItem> COVEN_SUMMONING_AMULET = ITEMS.registerItem(
             "coven_summoning_amulet", CovenSummoningAmuletItem::new, new Item.Properties().stacksTo(1));
 
-    // CAULDRON
+    // CAULDRON ===============================================================================================
     public static final DeferredItem<WitchsCauldronItem> WITCHS_CAULDRON_ITEM =
             ITEMS.registerItem("witchs_cauldron", WitchsCauldronItem::new, new Item.Properties());
 
@@ -54,9 +52,18 @@ public class ModItems {
     public static final DeferredItem<CauldronTerminatorItem> CAULDRON_TERMINATOR =
             ITEMS.registerItem("cauldron_terminator", CauldronTerminatorItem::new, new Item.Properties());
 
-    // FARMING
+    // FARMING ================================================================================================
     public static final DeferredItem<BlockItem> MORTAR_PESTLE = ITEMS.registerSimpleBlockItem(
             "mortar_pestle", ModBlocks.MORTAR_PESTLE);
 
+    // SEEDS
+    public static final DeferredItem<BlockItem> MOTHLEAF_SEEDS =
+            ITEMS.registerSimpleBlockItem("mothleaf_seeds", ModBlocks.MOTHLEAF_CROP);
+
+    // PLANTS
+    public static final DeferredItem<Item> MOTHLEAF = ITEMS.registerSimpleItem("mothleaf", new Item.Properties());
+
+    // GRINDED MATS
+    public static final DeferredItem<Item> MOTHLEAF_DUST = ITEMS.registerSimpleItem("mothleaf_dust", new Item.Properties());
 
 }

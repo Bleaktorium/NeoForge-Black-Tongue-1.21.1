@@ -1,5 +1,6 @@
 package net.bleaktorium.black_tongue.farming;
 
+import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,6 +24,6 @@ public class HerbGrindingRecipes {
     }
 
     public static void bootstrap() {
-        register(net.minecraft.world.item.Items.WHEAT, new ItemStack(net.minecraft.world.item.Items.WHEAT_SEEDS));
+        register(ModItems.MOTHLEAF.get(), new ItemStack(ModItems.MOTHLEAF_DUST.get()));
     }
 }
