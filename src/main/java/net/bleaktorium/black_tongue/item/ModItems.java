@@ -52,6 +52,10 @@ public class ModItems {
     public static final DeferredItem<CauldronTerminatorItem> CAULDRON_TERMINATOR =
             ITEMS.registerItem("cauldron_terminator", CauldronTerminatorItem::new, new Item.Properties());
 
+    // ALCHEMY ================================================================================================
+    public static final DeferredItem<BlockItem> SCRYER = ITEMS.registerSimpleBlockItem(
+            "scryer", ModBlocks.SCRYER);
+
     // FARMING ================================================================================================
     public static final DeferredItem<BlockItem> MORTAR_PESTLE = ITEMS.registerSimpleBlockItem(
             "mortar_pestle", ModBlocks.MORTAR_PESTLE);

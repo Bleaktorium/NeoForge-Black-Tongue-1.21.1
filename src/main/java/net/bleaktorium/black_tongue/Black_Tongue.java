@@ -4,6 +4,7 @@ import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.block.entity.ModBlockEntities;
 import net.bleaktorium.black_tongue.block.entity.client.MortarAndPestleRenderer;
 import net.bleaktorium.black_tongue.block.entity.client.RitualTableRenderer;
+import net.bleaktorium.black_tongue.block.entity.client.ScryerRenderer;
 import net.bleaktorium.black_tongue.block.entity.client.WitchsCauldronRenderer;
 import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
 import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
@@ -100,6 +101,7 @@ public class Black_Tongue {
             event.registerBlockEntityRenderer(ModBlockEntities.RITUAL_TABLE_BE.get(), context -> new RitualTableRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.WITCHS_CAULDRON_BE.get(), context -> new WitchsCauldronRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.MORTAR_AND_PESTLE_BE.get(), context -> new MortarAndPestleRenderer());
+            event.registerBlockEntityRenderer(ModBlockEntities.SCRYER_BE.get(), context -> new ScryerRenderer());
         }
 
         @SubscribeEvent

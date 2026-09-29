@@ -29,5 +29,8 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("mortar_and_pestle_be",
                     () -> BlockEntityType.Builder.of(MortarAndPestleBlockEntity::new, ModBlocks.MORTAR_PESTLE.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ScryerBlockEntity>> SCRYER_BE =
+            BLOCK_ENTITIES.register("scryer_be",
+                    () -> BlockEntityType.Builder.of(ScryerBlockEntity::new, ModBlocks.SCRYER.get()).build(null));
 
 }

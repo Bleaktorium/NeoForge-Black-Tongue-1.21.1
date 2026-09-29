@@ -38,4 +38,7 @@ public class ModBlocks {
                     .sound(net.minecraft.world.level.block.SoundType.CROP)
                     .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY),
                     3, ModItems.MOTHLEAF_SEEDS));
+
+    public static final DeferredBlock<ScryerBlock> SCRYER = BLOCKS.register("scryer",
+            () -> new ScryerBlock(BlockBehaviour.Properties.of().strength(3.0f).noOcclusion()));
 }

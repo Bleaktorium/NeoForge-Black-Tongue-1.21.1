@@ -33,6 +33,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.MOTHLEAF.get());
                         output.accept(ModItems.MOTHLEAF_SEEDS.get());
                         output.accept(ModItems.MOTHLEAF_DUST.get());
+                        output.accept(ModItems.SCRYER.get());
                     })
                     .build());
 }

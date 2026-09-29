@@ -1,6 +1,8 @@
 package net.bleaktorium.black_tongue.dialog;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
+import net.bleaktorium.black_tongue.alchemy.AlchemyKnowledgeClientHandler;
+import net.bleaktorium.black_tongue.alchemy.AlchemyKnowledgeSyncPacket;
 import net.bleaktorium.black_tongue.coven.*;
 import net.bleaktorium.black_tongue.farming.MortarGrindPacket;
 import net.bleaktorium.black_tongue.farming.MortarGrindServerHandler;
@@ -101,6 +103,12 @@ public class DialogNetworking {
         registrar.playBidirectional(
                 MortarGrindPacket.TYPE, MortarGrindPacket.STREAM_CODEC,
                 new DirectionalPayloadHandler<>((packet, context) -> {}, MortarGrindServerHandler::handle));
+
+        registrar.playBidirectional(
+                AlchemyKnowledgeSyncPacket.TYPE, AlchemyKnowledgeSyncPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(AlchemyKnowledgeClientHandler::handleSync, (packet, context) -> {}));
+
+
     }
 
 }

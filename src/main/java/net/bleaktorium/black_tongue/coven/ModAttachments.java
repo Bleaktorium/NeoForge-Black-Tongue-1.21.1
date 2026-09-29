@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue.coven;
 
 import com.mojang.serialization.Codec;
 import net.bleaktorium.black_tongue.Black_Tongue;
+import net.bleaktorium.black_tongue.alchemy.AlchemyKnowledge;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -25,7 +26,14 @@ public class ModAttachments {
                     .serialize(WitchReputationData.CODEC)
                     .build());
 
+    public static final Supplier<AttachmentType<AlchemyKnowledge>> ALCHEMY_KNOWLEDGE =
+            ATTACHMENT_TYPES.register("alchemy_knowledge", () -> AttachmentType
+                    .builder(AlchemyKnowledge::initial)
+                    .serialize(AlchemyKnowledge.CODEC)
+                    .build());
+
     public static void register(net.neoforged.bus.api.IEventBus modEventBus) {
+
         ATTACHMENT_TYPES.register(modEventBus);
     }
 }
