@@ -76,6 +76,20 @@ public class ScryerBlockEntity extends BlockEntity implements GeoBlockEntity {
     }
 
     public void tickServer(ServerLevel level) {
+        if (level.getGameTime() % 8 == 0) {
+
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME,
+                    worldPosition.getX() + 0.5, worldPosition.getY() + 10.5 / 16.0, worldPosition.getZ() + 0.5,
+                    1, 0.0, 0.0, 0.0, 0.0);
+
+
+            if (hasWater && result == Result.NONE) {
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.BUBBLE_POP,
+                        worldPosition.getX() + 0.5, worldPosition.getY() + 17.0 / 16.0, worldPosition.getZ() + 0.5,
+                        2, 0, 0.05, 0, 0.01);
+            }
+        }
+
         if (!isScanning()) return;
 
         scanTicksRemaining--;

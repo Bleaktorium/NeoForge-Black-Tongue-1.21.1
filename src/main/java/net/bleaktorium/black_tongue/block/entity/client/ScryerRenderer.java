@@ -15,14 +15,10 @@ public class ScryerRenderer extends GeoBlockRenderer<ScryerBlockEntity> {
         super(new ScryerModel());
     }
 
-    // Derived from the "liquid" bone's cube in scryer.geo.json, converted
-    // from Blockbench units (divide by 16) into a block-fraction offset
-    // from the block's own corner. NUDGE THESE after one in-game look --
-    // Blockbench-to-world conversion is easy to get slightly off.
     private static final double ICON_X = 0.5;
     private static final double ICON_Y = 17.0 / 16.0;
     private static final double ICON_Z = 0.5;
-    private static final float ICON_SCALE = 0.4f; // aims to fit roughly within the 6x6 liquid footprint
+    private static final float ICON_SCALE = 0.4f;
 
     @Override
     public void render(ScryerBlockEntity blockEntity, float partialTick, PoseStack poseStack,
@@ -36,8 +32,11 @@ public class ScryerRenderer extends GeoBlockRenderer<ScryerBlockEntity> {
         poseStack.pushPose();
         poseStack.translate(ICON_X, ICON_Y, ICON_Z);
 
+        poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+
         double time = blockEntity.getLevel().getGameTime() + partialTick;
-        poseStack.mulPose(Axis.YP.rotationDegrees((float) (time * 2.0)));
+        poseStack.mulPose(Axis.ZP.rotationDegrees((float) (time * 2.0)));
+
         poseStack.scale(ICON_SCALE, ICON_SCALE, ICON_SCALE);
 
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
