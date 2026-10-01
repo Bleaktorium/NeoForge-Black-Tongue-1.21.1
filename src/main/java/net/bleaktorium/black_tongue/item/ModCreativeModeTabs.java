@@ -16,7 +16,7 @@ public class ModCreativeModeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> BLACK_TONGUE_TAB =
             CREATIVE_MODE_TABS.register("black_tongue_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("creativetab.black_tongue"))
-                    .icon(() -> new ItemStack(ModBlocks.RITUAL_TABLE.get().asItem()))
+                    .icon(() -> new ItemStack(ModBlocks.MORTAR_PESTLE.get().asItem()))
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.RUNIC_ETCHING_TOOL.get());
                         output.accept(ModItems.RITUAL_TABLE_ITEM.get());
@@ -31,9 +31,15 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.MOON_PHASE_RUNE_ITEM.get());
                         output.accept(ModItems.MORTAR_PESTLE.get());
                         output.accept(ModItems.MOTHLEAF.get());
+                        output.accept(ModItems.MOTHLEAF_DRY.get());
                         output.accept(ModItems.MOTHLEAF_SEEDS.get());
                         output.accept(ModItems.MOTHLEAF_DUST.get());
                         output.accept(ModItems.SCRYER.get());
+                        output.accept(ModItems.DRYING_RACK.get());
+                        output.accept(ModItems.DEVILSTHORN.get());
+                        output.accept(ModItems.DEVILSTHORN_DRIED1.get());
+                        output.accept(ModItems.DEVILSTHORN_DRIED2.get());
+                        output.accept(ModItems.DEVILSTHORN_SEEDS.get());
                     })
                     .build());
 }

@@ -2,15 +2,13 @@ package net.bleaktorium.black_tongue;
 
 import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.block.entity.ModBlockEntities;
-import net.bleaktorium.black_tongue.block.entity.client.MortarAndPestleRenderer;
-import net.bleaktorium.black_tongue.block.entity.client.RitualTableRenderer;
-import net.bleaktorium.black_tongue.block.entity.client.ScryerRenderer;
-import net.bleaktorium.black_tongue.block.entity.client.WitchsCauldronRenderer;
+import net.bleaktorium.black_tongue.block.entity.client.*;
 import net.bleaktorium.black_tongue.cauldron.CauldronIngredients;
 import net.bleaktorium.black_tongue.cauldron.CauldronRecipes;
 import net.bleaktorium.black_tongue.coven.ModAttachments;
 import net.bleaktorium.black_tongue.coven.ModDataComponents;
 import net.bleaktorium.black_tongue.entity.ModEntities;
+import net.bleaktorium.black_tongue.farming.HerbDryingProfiles;
 import net.bleaktorium.black_tongue.farming.HerbGrindingRecipes;
 import net.bleaktorium.black_tongue.item.ModCreativeModeTabs;
 import net.bleaktorium.black_tongue.item.ModItems;
@@ -37,6 +35,7 @@ import net.bleaktorium.black_tongue.coven.JournalTradeScreen;
 import net.bleaktorium.black_tongue.coven.WitchTradeScreen;
 import net.bleaktorium.black_tongue.entity.client.CovenHutRenderer;
 import net.bleaktorium.black_tongue.entity.client.CovenMotherCatRenderer;
+import net.bleaktorium.black_tongue.block.custom.DryingRackScreen;
 
 
 @Mod(Black_Tongue.MOD_ID)
@@ -67,6 +66,7 @@ public class Black_Tongue {
         CauldronIngredients.bootstrap();
         CauldronRecipes.bootstrap();
         HerbGrindingRecipes.bootstrap();
+        HerbDryingProfiles.bootstrap();
     }
 
 
@@ -85,6 +85,11 @@ public class Black_Tongue {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
+
+                net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(
+                        ModBlocks.DEVILSTHORN_CROP.get(),
+                        net.minecraft.client.renderer.RenderType.cutout());
+
                 net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(
                         ModBlocks.MOTHLEAF_CROP.get(),
                         net.minecraft.client.renderer.RenderType.cutout());
@@ -102,12 +107,14 @@ public class Black_Tongue {
             event.registerBlockEntityRenderer(ModBlockEntities.WITCHS_CAULDRON_BE.get(), context -> new WitchsCauldronRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.MORTAR_AND_PESTLE_BE.get(), context -> new MortarAndPestleRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.SCRYER_BE.get(), context -> new ScryerRenderer());
+            event.registerBlockEntityRenderer(ModBlockEntities.DRYING_RACK_BE.get(), context -> new DryingRackRenderer());
         }
 
         @SubscribeEvent
         public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
             event.register(ModMenuTypes.JOURNAL_TRADE.get(), JournalTradeScreen::new);
             event.register(ModMenuTypes.WITCH_TRADE.get(), WitchTradeScreen::new);
+            event.register(ModMenuTypes.DRYING_RACK.get(), DryingRackScreen::new);
         }
     }
 }

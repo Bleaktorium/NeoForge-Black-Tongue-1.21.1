@@ -39,6 +39,16 @@ public class ModBlocks {
                     .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY),
                     3, ModItems.MOTHLEAF_SEEDS));
 
+    public static final DeferredBlock<HerbCropBlock> DEVILSTHORN_CROP = BLOCKS.register("devilsthorn_crop",
+            () -> new HerbCropBlock(BlockBehaviour.Properties.of()
+                    .noCollission().randomTicks().instabreak()
+                    .sound(net.minecraft.world.level.block.SoundType.CROP)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY),
+                    3, ModItems.DEVILSTHORN_SEEDS));
+
     public static final DeferredBlock<ScryerBlock> SCRYER = BLOCKS.register("scryer",
             () -> new ScryerBlock(BlockBehaviour.Properties.of().strength(3.0f).noOcclusion()));
+
+    public static final DeferredBlock<DryingRackBlock> DRYING_RACK = BLOCKS.register("drying_rack",
+            () -> new DryingRackBlock(BlockBehaviour.Properties.of().strength(3.0f).noOcclusion()));
 }

@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "black_tongue:block/ritual_table"
-  }
-}

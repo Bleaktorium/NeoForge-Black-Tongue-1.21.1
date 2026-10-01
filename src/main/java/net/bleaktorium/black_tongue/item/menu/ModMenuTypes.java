@@ -1,6 +1,8 @@
 package net.bleaktorium.black_tongue.item.menu;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
+import net.bleaktorium.black_tongue.block.custom.DryingRackMenu;
+import net.bleaktorium.black_tongue.block.entity.DryingRackBlockEntity;
 import net.bleaktorium.black_tongue.coven.JournalTradeMenu;
 import net.bleaktorium.black_tongue.coven.WitchTradeMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,4 +21,9 @@ public class ModMenuTypes {
 
     public static final DeferredHolder<MenuType<?>, MenuType<WitchTradeMenu>> WITCH_TRADE =
             MENU_TYPES.register("witch_trade", () -> IMenuTypeExtension.create(WitchTradeMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<DryingRackMenu>> DRYING_RACK =
+            MENU_TYPES.register("drying_rack", () -> IMenuTypeExtension.create(
+                    (containerId, inv, buf) -> new DryingRackMenu(containerId, inv,
+                            (DryingRackBlockEntity) inv.player.level().getBlockEntity(buf.readBlockPos()))));
 }

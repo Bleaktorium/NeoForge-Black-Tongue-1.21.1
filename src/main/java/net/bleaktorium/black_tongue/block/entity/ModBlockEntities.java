@@ -33,4 +33,8 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("scryer_be",
                     () -> BlockEntityType.Builder.of(ScryerBlockEntity::new, ModBlocks.SCRYER.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DryingRackBlockEntity>> DRYING_RACK_BE =
+            BLOCK_ENTITIES.register("drying_rack_be",
+                    () -> BlockEntityType.Builder.of(DryingRackBlockEntity::new, ModBlocks.DRYING_RACK.get()).build(null));
+
 }

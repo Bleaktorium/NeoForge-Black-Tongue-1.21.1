@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "black_tongue:devilsthorn",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "black_tongue:devilsthorn_crop",
+              "properties": { "age": "3" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "black_tongue:devilsthorn_seeds" }
+      ]
+    }
+  ]
+}
