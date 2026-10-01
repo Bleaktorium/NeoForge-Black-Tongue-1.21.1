@@ -37,6 +37,14 @@ public class DryingRackBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable net.minecraft.world.entity.LivingEntity placer, net.minecraft.world.item.ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof DryingRackBlockEntity rack) {
+            rack.rollTextureVariant(level.getRandom());
+        }
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
         builder.add(HorizontalDirectionalBlock.FACING);
     }
@@ -45,7 +53,7 @@ public class DryingRackBlock extends BaseEntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction clickedFace = context.getClickedFace();
-        if (clickedFace.getAxis().isVertical()) return null; // refuses placement on a floor or ceiling entirely
+        if (clickedFace.getAxis().isVertical()) return null;
 
         BlockPos behindPos = context.getClickedPos().relative(clickedFace.getOpposite());
         if (!context.getLevel().getBlockState(behindPos).isFaceSturdy(context.getLevel(), behindPos, clickedFace)) {
@@ -55,8 +63,6 @@ public class DryingRackBlock extends BaseEntityBlock {
         return this.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, clickedFace);
     }
 
-    // If the block it was mounted on is later broken/removed, this one
-    // pops off too, rather than floating unsupported.
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);

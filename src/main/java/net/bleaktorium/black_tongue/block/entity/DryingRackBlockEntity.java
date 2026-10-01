@@ -9,6 +9,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -16,13 +17,13 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import javax.annotation.Nullable;
+
 public class DryingRackBlockEntity extends BlockEntity implements GeoBlockEntity, Container {
 
     private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    // Index 0/1/2 = herb3/herb1/herb2's real left-to-right bone layout,
-    // matching the mockup's slot order (left, center, right on screen).
     private final ItemStack[] slots = { ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY };
     private final int[] elapsedTicks = { 0, 0, 0 };
 
@@ -39,8 +40,6 @@ public class DryingRackBlockEntity extends BlockEntity implements GeoBlockEntity
         syncToClients();
     }
 
-    // Called automatically each tick a slot's contents actually change --
-    // resets that slot's progress, since a fresh item means a fresh dry.
     private void onSlotChanged(int slot) {
         elapsedTicks[slot] = 0;
     }
@@ -58,9 +57,6 @@ public class DryingRackBlockEntity extends BlockEntity implements GeoBlockEntity
                 changed = true;
 
                 if (elapsedTicks[i] == maxTicks) {
-                    // Swaps IN PLACE to the finished item -- the player
-                    // then just takes it out of the menu like any other
-                    // finished-goods slot, same spirit as a furnace output.
                     slots[i] = profile.stageResults().get(profile.stageCount() - 1).copy();
                 }
             }
@@ -73,10 +69,6 @@ public class DryingRackBlockEntity extends BlockEntity implements GeoBlockEntity
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }
-
-    // --- Container interface: this is what lets a vanilla Slot read/write
-    // these three entries directly, the same way a furnace's own block
-    // entity backs its menu. ---
 
     @Override
     public int getContainerSize() { return 3; }
@@ -113,7 +105,8 @@ public class DryingRackBlockEntity extends BlockEntity implements GeoBlockEntity
     }
 
     @Override
-    public int getMaxStackSize() { return 1; } // one herb bundle per slot, matching the physical string-bunch concept
+    public int getMaxStackSize() {
+        return 1; }
 
     @Override
     public void setChanged() {
