@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -40,20 +41,24 @@ public class PagankaRootCropBlock extends HerbCropBlock implements EntityBlock {
     }
 
     @Override
-    protected void onFullyRipeTick(ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
-        if (!(level.getBlockEntity(pos) instanceof PagankaRootCropBlockEntity be)) return;
+    protected boolean isRandomlyTicking(BlockState state) {
+        return true;
+    }
 
-        long currentDay = level.getDayTime() / 24000L;
-
-        if (be.getRipenedOnDay() == -1) {
-            be.setRipenedOnDay(currentDay);
+    @Override
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (isMaxAge(state) && !level.isNight() && !state.getValue(WAITED_ONE_NIGHT)) {
+            level.setBlock(pos, state.setValue(WAITED_ONE_NIGHT, true), Block.UPDATE_ALL);
             return;
         }
+        super.randomTick(state, level, pos, random);
+    }
 
-        if (currentDay > be.getRipenedOnDay()) {
+    @Override
+    protected void onFullyRipeTick(ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
+        if (state.getValue(WAITED_ONE_NIGHT)) {
             transformIntoEntity(level, pos);
         }
-
     }
 
     private void transformIntoEntity(ServerLevel level, BlockPos pos) {

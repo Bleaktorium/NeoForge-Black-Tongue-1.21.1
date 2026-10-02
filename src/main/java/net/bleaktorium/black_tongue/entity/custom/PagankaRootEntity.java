@@ -31,6 +31,11 @@ import java.util.List;
 public class PagankaRootEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
+    private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation MOVING = RawAnimation.begin().thenLoop("moving");
+    private static final RawAnimation DEATH = RawAnimation.begin().thenPlayAndHold("death");
+    private static final RawAnimation MISCHIEF = RawAnimation.begin().thenPlay("mischief");
+
     private static final int DESPAWN_CHECK_INTERVAL = 10 * 20;
     private static final double DESPAWN_CHANCE = 0.02; // PLACEHOLDER
 
@@ -79,12 +84,9 @@ public class PagankaRootEntity extends PathfinderMob implements GeoEntity {
         if (level() instanceof ServerLevel serverLevel && gardenPos != null) {
             if (serverLevel.getBlockState(gardenPos).isAir()) {
                 BlockState ripe = ModBlocks.PAGANKA_ROOT.get().defaultBlockState()
-                        .setValue(CropBlock.AGE, 5);
+                        .setValue(CropBlock.AGE, 5)
+                        .setValue(PagankaRootCropBlock.WAITED_ONE_NIGHT, true);
                 serverLevel.setBlock(gardenPos, ripe, 3);
-
-                if (serverLevel.getBlockEntity(gardenPos) instanceof PagankaRootCropBlockEntity be) {
-                    be.setRipenedOnDay(serverLevel.getDayTime() / 24000L);
-                }
             }
         }
         this.discard();
@@ -117,16 +119,12 @@ public class PagankaRootEntity extends PathfinderMob implements GeoEntity {
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> state) {
         if (this.isDeadOrDying()) {
-            state.setAndContinue(RawAnimation.begin().then("death", Animation.LoopType.HOLD_ON_LAST_FRAME));
-            return PlayState.CONTINUE;
+            return state.setAndContinue(DEATH);
         }
         if (mischiefTicksRemaining > 0) {
-            state.setAndContinue(RawAnimation.begin().then("mischief", Animation.LoopType.PLAY_ONCE));
-            return PlayState.CONTINUE;
+            return state.setAndContinue(MISCHIEF);
         }
-        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6;
-        state.setAndContinue(RawAnimation.begin().then(moving ? "walking" : "idle", Animation.LoopType.LOOP));
-        return PlayState.CONTINUE;
+        return state.setAndContinue(state.isMoving() ? MOVING : IDLE);
     }
 
     @Override

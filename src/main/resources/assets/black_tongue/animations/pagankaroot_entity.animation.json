@@ -34,13 +34,13 @@
 						},
 						"0.5": {
 							"post": {
-								"vector": [-10, 0, 0]
+								"vector": [10, 0, 0]
 							},
 							"lerp_mode": "catmullrom"
 						},
 						"0.8333": {
 							"post": {
-								"vector": [20, 0, 0]
+								"vector": [-20, 0, 0]
 							},
 							"lerp_mode": "catmullrom"
 						},
