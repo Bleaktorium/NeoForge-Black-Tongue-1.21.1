@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "black_tongue:paganka_root",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "black_tongue:paganka_root",
+              "properties": { "age": "5" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "black_tongue:paganka_root_seeds" }
+      ]
+    }
+  ]
+}
