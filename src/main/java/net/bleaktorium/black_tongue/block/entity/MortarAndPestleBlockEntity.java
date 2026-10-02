@@ -15,6 +15,7 @@ import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import software.bernie.geckolib.util.RenderUtil;
 
 public class MortarAndPestleBlockEntity extends BlockEntity implements GeoBlockEntity {
 
@@ -28,6 +29,22 @@ public class MortarAndPestleBlockEntity extends BlockEntity implements GeoBlockE
     private ItemStack storedItem = ItemStack.EMPTY;
     private int grindTicksAccumulated = 0;
     private boolean grinding = false;
+    private double animClock = 0;
+    private double lastRealTick = -1;
+
+    private boolean isGrindPaused() {
+        return hasItem() && grindTicksAccumulated > 0 && !grinding;
+    }
+
+    @Override
+    public double getTick(Object blockEntity) {
+        double now = RenderUtil.getCurrentTick();
+        if (lastRealTick >= 0 && !isGrindPaused()) {
+            animClock += now - lastRealTick;
+        }
+        lastRealTick = now;
+        return animClock;
+    }
 
     public MortarAndPestleBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MORTAR_AND_PESTLE_BE.get(), pos, state);
@@ -104,16 +121,10 @@ public class MortarAndPestleBlockEntity extends BlockEntity implements GeoBlockE
     }
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> state) {
-        AnimationController<T> controller = state.getController();
-
         if (!hasItem() || grindTicksAccumulated == 0) {
-            controller.setAnimationSpeed(1.0);
-            state.setAndContinue(IDLE);
-        } else {
-            controller.setAnimationSpeed(grinding ? 1.0 : 0.0001);
-            state.setAndContinue(MUSHING);
+            return state.setAndContinue(IDLE);
         }
-        return PlayState.CONTINUE;
+        return state.setAndContinue(MUSHING);
     }
 
     @Override
