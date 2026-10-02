@@ -7,9 +7,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,6 +22,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class DryingRackBlock extends BaseEntityBlock {
@@ -29,6 +34,26 @@ public class DryingRackBlock extends BaseEntityBlock {
     public DryingRackBlock(BlockBehaviour.Properties properties) {
         super(properties);
         registerDefaultState(this.stateDefinition.any().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH));
+    }
+
+    private static final VoxelShape NORTH_SHAPE = Block.box(0, 5, 14, 16, 14, 16);
+    private static final VoxelShape SOUTH_SHAPE = Block.box(0, 5, 0, 16, 14, 2);
+    private static final VoxelShape EAST_SHAPE  = Block.box(0, 5, 0, 2, 14, 16);
+    private static final VoxelShape WEST_SHAPE  = Block.box(14, 5, 0, 16, 14, 16);
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return switch (state.getValue(HorizontalDirectionalBlock.FACING)) {
+            case SOUTH -> SOUTH_SHAPE;
+            case EAST -> EAST_SHAPE;
+            case WEST -> WEST_SHAPE;
+            default -> NORTH_SHAPE;
+        };
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
     }
 
     @Override

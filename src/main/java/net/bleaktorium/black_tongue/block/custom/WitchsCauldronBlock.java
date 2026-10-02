@@ -17,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,6 +27,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
@@ -34,8 +39,28 @@ public class WitchsCauldronBlock extends BaseEntityBlock {
     public static final MapCodec<WitchsCauldronBlock> CODEC = simpleCodec(WitchsCauldronBlock::new);
 
     public WitchsCauldronBlock(BlockBehaviour.Properties properties) {
-
         super(properties);
+    }
+
+    private static final VoxelShape BASE    = Block.box(1, 0, 1, 15, 3, 15);
+    private static final VoxelShape BODY    = Block.box(1, 3, 1, 15, 16, 15);
+    private static final VoxelShape BULGE_X = Block.box(0, 5, 3, 16, 14, 13);
+    private static final VoxelShape BULGE_Z = Block.box(3, 5, 0, 13, 14, 16);
+    private static final VoxelShape INSIDE  = Block.box(2, 4, 2, 14, 16, 14);
+
+    private static final VoxelShape SHAPE = Shapes.join(
+            Shapes.or(BASE, BODY, BULGE_X, BULGE_Z),
+            INSIDE,
+            BooleanOp.ONLY_FIRST);
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return INSIDE;
     }
 
     @Override
