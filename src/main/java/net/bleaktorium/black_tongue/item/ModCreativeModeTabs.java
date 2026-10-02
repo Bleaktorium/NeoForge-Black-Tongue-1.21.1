@@ -40,6 +40,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.DEVILSTHORN_DRIED1.get());
                         output.accept(ModItems.DEVILSTHORN_DRIED2.get());
                         output.accept(ModItems.DEVILSTHORN_SEEDS.get());
+                        output.accept(ModItems.PAGANKA_ROOT_SEEDS.get());
+                        output.accept(ModItems.PAGANKA_ROOT.get());
                     })
                     .build());
 }

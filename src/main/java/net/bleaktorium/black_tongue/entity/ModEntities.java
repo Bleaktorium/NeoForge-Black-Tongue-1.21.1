@@ -1,10 +1,7 @@
 package net.bleaktorium.black_tongue.entity;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
-import net.bleaktorium.black_tongue.entity.custom.CovenHutEntity;
-import net.bleaktorium.black_tongue.entity.custom.CovenMotherCatEntity;
-import net.bleaktorium.black_tongue.entity.custom.CovenMotherEntity;
-import net.bleaktorium.black_tongue.entity.custom.CovenlessWitchEntity;
+import net.bleaktorium.black_tongue.entity.custom.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -34,6 +31,11 @@ public class ModEntities {
             ENTITY_TYPES.register("coven_mother_cat", () -> EntityType.Builder.of(CovenMotherCatEntity::new, MobCategory.CREATURE)
                     .sized(0.6f, 1.95f) // width/height — placeholder
                     .build("coven_mother_cat"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<PagankaRootEntity>> PAGANKA_ROOT =
+            ENTITY_TYPES.register("paganka_root", () -> EntityType.Builder.of(PagankaRootEntity::new, MobCategory.CREATURE)
+                    .sized(0.5f, 0.6f) // placeholder — adjust once you can see the real model's size in-game
+                    .build("paganka_root"));
 
 
 }

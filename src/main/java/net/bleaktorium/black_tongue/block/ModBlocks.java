@@ -51,4 +51,8 @@ public class ModBlocks {
 
     public static final DeferredBlock<DryingRackBlock> DRYING_RACK = BLOCKS.register("drying_rack",
             () -> new DryingRackBlock(BlockBehaviour.Properties.of().strength(3.0f).noOcclusion()));
+
+    public static final DeferredBlock<PagankaRootCropBlock> PAGANKA_ROOT = BLOCKS.register("paganka_root",
+            () -> new PagankaRootCropBlock(BlockBehaviour.Properties.of().strength(3.0f).noOcclusion(),
+                    5, ModItems.PAGANKA_ROOT_SEEDS));
 }

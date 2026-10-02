@@ -37,4 +37,8 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("drying_rack_be",
                     () -> BlockEntityType.Builder.of(DryingRackBlockEntity::new, ModBlocks.DRYING_RACK.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PagankaRootCropBlockEntity>> PAGANKA_ROOT_CROP_BE =
+            BLOCK_ENTITIES.register("paganka_root_crop_be",
+                    () -> BlockEntityType.Builder.of(PagankaRootCropBlockEntity::new, ModBlocks.PAGANKA_ROOT.get()).build(null));
+
 }

@@ -62,11 +62,14 @@ public class ModItems {
     public static final DeferredItem<BlockItem> DRYING_RACK = ITEMS.registerSimpleBlockItem(
             "drying_rack", ModBlocks.DRYING_RACK);
 
+
     // SEEDS
     public static final DeferredItem<BlockItem> MOTHLEAF_SEEDS =
             ITEMS.registerSimpleBlockItem("mothleaf_seeds", ModBlocks.MOTHLEAF_CROP);
     public static final DeferredItem<BlockItem> DEVILSTHORN_SEEDS =
             ITEMS.registerSimpleBlockItem("devilsthorn_seeds", ModBlocks.DEVILSTHORN_CROP);
+    public static final DeferredItem<BlockItem> PAGANKA_ROOT_SEEDS =
+            ITEMS.registerSimpleBlockItem("paganka_root_seeds", ModBlocks.PAGANKA_ROOT);
 
     // PLANTS
     public static final DeferredItem<Item> MOTHLEAF = ITEMS.registerSimpleItem("mothleaf", new Item.Properties());
@@ -75,6 +78,8 @@ public class ModItems {
     public static final DeferredItem<Item> DEVILSTHORN = ITEMS.registerSimpleItem("devilsthorn", new Item.Properties());
     public static final DeferredItem<Item> DEVILSTHORN_DRIED1 = ITEMS.registerSimpleItem("devilsthorn_dried1", new Item.Properties());
     public static final DeferredItem<Item> DEVILSTHORN_DRIED2 = ITEMS.registerSimpleItem("devilsthorn_dried2", new Item.Properties());
+
+    public static final DeferredItem<Item> PAGANKA_ROOT = ITEMS.registerSimpleItem("paganka_root", new Item.Properties());
 
     // GRINDED MATS
     public static final DeferredItem<Item> MOTHLEAF_DUST = ITEMS.registerSimpleItem("mothleaf_dust", new Item.Properties());

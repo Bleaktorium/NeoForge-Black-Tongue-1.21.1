@@ -36,6 +36,7 @@ import net.bleaktorium.black_tongue.coven.WitchTradeScreen;
 import net.bleaktorium.black_tongue.entity.client.CovenHutRenderer;
 import net.bleaktorium.black_tongue.entity.client.CovenMotherCatRenderer;
 import net.bleaktorium.black_tongue.block.custom.DryingRackScreen;
+import net.bleaktorium.black_tongue.entity.client.PagankaRootRenderer;
 
 
 @Mod(Black_Tongue.MOD_ID)
@@ -108,6 +109,8 @@ public class Black_Tongue {
             event.registerBlockEntityRenderer(ModBlockEntities.MORTAR_AND_PESTLE_BE.get(), context -> new MortarAndPestleRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.SCRYER_BE.get(), context -> new ScryerRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.DRYING_RACK_BE.get(), context -> new DryingRackRenderer());
+            event.registerBlockEntityRenderer(ModBlockEntities.PAGANKA_ROOT_CROP_BE.get(), context -> new PagankaRootCropRenderer());
+            event.registerEntityRenderer(ModEntities.PAGANKA_ROOT.get(), PagankaRootRenderer::new);
         }
 
         @SubscribeEvent

@@ -1,10 +1,7 @@
 package net.bleaktorium.black_tongue.entity;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
-import net.bleaktorium.black_tongue.entity.custom.CovenHutEntity;
-import net.bleaktorium.black_tongue.entity.custom.CovenMotherCatEntity;
-import net.bleaktorium.black_tongue.entity.custom.CovenMotherEntity;
-import net.bleaktorium.black_tongue.entity.custom.CovenlessWitchEntity;
+import net.bleaktorium.black_tongue.entity.custom.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
@@ -17,5 +14,6 @@ public class ModEntityAttributes {
         event.put(ModEntities.COVENLESS_WITCH.get(), CovenlessWitchEntity.createAttributes().build());
         event.put(ModEntities.COVEN_HUT.get(), CovenHutEntity.createAttributes().build());
         event.put(ModEntities.COVEN_MOTHER_CAT.get(), CovenMotherCatEntity.createAttributes().build());
+        event.put(ModEntities.PAGANKA_ROOT.get(), PagankaRootEntity.createAttributes().build());
     }
 }
