@@ -43,11 +43,11 @@ public class CovenService {
         return new FormationResult(Status.CREATED, coven, candidatesFor(coven, participants));
     }
 
-    public static List<Coven> removeDeadWitch(MinecraftServer server, String witchName) {
+    public static List<Coven> removeDeadWitch(MinecraftServer server, String witchKey) {
         CovenSavedData data = CovenSavedData.get(server);
         List<Coven> leftCovens = new ArrayList<>();
-        for (Coven coven : data.findContainingWitch(witchName)) {
-            if (data.removeMember(coven.founderId(), CovenMember.Kind.WITCH, witchName) == Coven.RemoveResult.REMOVED) {
+        for (Coven coven : data.findContainingWitch(witchKey)) {
+            if (data.removeMember(coven.founderId(), CovenMember.Kind.WITCH, witchKey) == Coven.RemoveResult.REMOVED) {
                 leftCovens.add(coven);
             }
         }

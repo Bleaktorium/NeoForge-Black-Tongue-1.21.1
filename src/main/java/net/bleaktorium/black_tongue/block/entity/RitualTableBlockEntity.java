@@ -276,6 +276,18 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
                 witchSeats.add(new WitchSeat(seat.pos(), seat.binding()));
                 people.add(RitualParticipant.witch(seat.witch(), key));
             } else if (seat.standing() != null) {
+                newPlayerSeats.add(new PlayerSeat(seat.standing().getUUID(), seat.pos()));
+                if (!seat.standing().getUUID().equals(player.getUUID())) {
+                    amp += RitualMath.PLAYER_PARTICIPANT_AMPLIFICATION;
+                    stabilitySum += RitualMath.PLAYER_PARTICIPANT_STABILITY;
+                    contributors++;
+                    people.add(RitualParticipant.player(seat.standing()));
+                }
+
+            } else {
+                contributors++;
+            }
+        }
 
         for (BlockPos offset : RitualTableBlock.RING_OFFSETS) {
             BlockPos stonePos = worldPosition.offset(offset);

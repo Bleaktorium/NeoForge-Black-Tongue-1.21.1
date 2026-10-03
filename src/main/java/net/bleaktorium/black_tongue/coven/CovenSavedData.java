@@ -53,10 +53,10 @@ public class CovenSavedData extends SavedData {
         return null;
     }
 
-    public List<Coven> findContainingWitch(String witchName) {
+    public List<Coven> findContainingWitch(String witchKey) {
         List<Coven> result = new ArrayList<>();
         for (Coven coven : covensByFounder.values()) {
-            if (coven.isMember(CovenMember.Kind.WITCH, witchName)) result.add(coven);
+            if (coven.isMember(CovenMember.Kind.WITCH, witchKey)) result.add(coven);
         }
         return result;
     }
