@@ -46,8 +46,19 @@ public class EmbalmingTableModel extends GeoModel<EmbalmingTableBlockEntity> {
         RemainsData data = table.getRemainsData();
         show("ancestor", data != null && data.origin() == RemainsData.Origin.ANCESTOR);
         show("witch", data != null && data.origin() == RemainsData.Origin.WITCH);
-        show("liquid", false);
-        show("armor_crafting", false); // the armor half of the station comes later
+
+        int age = table.pourAge();
+        show("liquid", age >= 0 && age < EmbalmingTableBlockEntity.LIQUID_GONE_TICK);
+
+        var pourPoint = getAnimationProcessor().getBone("pour_point");
+        if (pourPoint != null) {
+            pourPoint.setTrackingMatrices(true);
+            if (age >= EmbalmingTableBlockEntity.DRIP_START && age < EmbalmingTableBlockEntity.DRIP_END) {
+                table.dripOil(pourPoint.getWorldPosition());
+            }
+        }
+
+        show("armor_crafting", false); // the armor half of the station
     }
 
     private void show(String boneName, boolean visible) {

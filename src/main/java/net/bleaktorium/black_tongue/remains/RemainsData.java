@@ -11,7 +11,8 @@ import net.minecraft.world.level.Level;
 
 import java.util.Optional;
 
-public record RemainsData(Origin origin, String name, long dayCollected, Optional<DecayTier> anointedTier) {
+public record RemainsData(Origin origin, String name, long dayCollected,
+                          Optional<DecayTier> anointedTier, int displeasure) {
 
     public enum Origin {
         ANCESTOR, WITCH;
@@ -54,6 +55,7 @@ public record RemainsData(Origin origin, String name, long dayCollected, Optiona
             Codec.STRING.fieldOf("name").forGetter(RemainsData::name),
             Codec.LONG.fieldOf("day_collected").forGetter(RemainsData::dayCollected),
             DecayTier.CODEC.optionalFieldOf("anointed_tier").forGetter(RemainsData::anointedTier)
+            Codec.INT.optionalFieldOf("displeasure", 0).forGetter(RemainsData::displeasure)
     ).apply(instance, RemainsData::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, RemainsData> STREAM_CODEC = StreamCodec.composite(
@@ -61,6 +63,7 @@ public record RemainsData(Origin origin, String name, long dayCollected, Optiona
             ByteBufCodecs.STRING_UTF8, RemainsData::name,
             ByteBufCodecs.VAR_LONG, RemainsData::dayCollected,
             ByteBufCodecs.optional(DecayTier.STREAM_CODEC), RemainsData::anointedTier,
+            ByteBufCodecs.VAR_INT, RemainsData::displeasure,
             RemainsData::new
     );
 
@@ -69,7 +72,15 @@ public record RemainsData(Origin origin, String name, long dayCollected, Optiona
     }
 
     public static RemainsData collectedNow(Origin origin, String name, Level level) {
-        return new RemainsData(origin, name, currentDay(level), Optional.empty());
+        return new RemainsData(origin, name, currentDay(level), Optional.empty(), 0);
+    }
+
+    public RemainsData withAnointedTier(DecayTier tier) {
+        return new RemainsData(origin, name, dayCollected, Optional.of(tier), displeasure);
+    }
+
+    public RemainsData withDispleasure(int amount) {
+        return new RemainsData(origin, name, dayCollected, anointedTier, amount);
     }
 
     public DecayTier tier(Level level) {

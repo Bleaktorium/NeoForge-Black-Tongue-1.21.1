@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -31,6 +32,18 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class EmbalmingTableBlockEntity extends BlockEntity implements GeoBlockEntity {
     private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation POUR = RawAnimation.begin().thenPlay("pour_oil");
+
+    public static final int POUR_TICKS = 126;
+    public static final int LIQUID_GONE_TICK = 92;
+    public static final int DRIP_START = 66;
+    public static final int DRIP_END = 92;
+
+    private long pourStart = -1;
+    @Nullable
+    private RemainsData.DecayTier pourOil = null;
+    private long lastDripTick = -1;
+
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     private ItemStack remains = ItemStack.EMPTY;
@@ -60,6 +73,10 @@ public class EmbalmingTableBlockEntity extends BlockEntity implements GeoBlockEn
     }
 
     public void tickServer(ServerLevel level) {
+        if (isPouring()) {
+            if (pourAge() >= POUR_TICKS) finishPour(level);
+            return;
+        }
         if (remains.isEmpty() || level.getGameTime() % 20 != 0) return;
         RemainsData data = getRemainsData();
         if (data != null && data.tier(level) == RemainsData.DecayTier.DUST) {
@@ -93,12 +110,16 @@ public class EmbalmingTableBlockEntity extends BlockEntity implements GeoBlockEn
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Remains", remains.saveOptional(registries));
+        tag.putLong("PourStart", pourStart);
+        if (pourOil != null) tag.putString("PourOil", pourOil.name());
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         remains = ItemStack.parseOptional(registries, tag.getCompound("Remains"));
+        pourStart = tag.contains("PourStart") ? tag.getLong("PourStart") : -1;
+        pourOil = tag.contains("PourOil") ? RemainsData.DecayTier.valueOf(tag.getString("PourOil")) : null;
     }
 
     @Override
@@ -113,7 +134,63 @@ public class EmbalmingTableBlockEntity extends BlockEntity implements GeoBlockEn
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, state -> state.setAndContinue(IDLE)));
+        controllers.add(new AnimationController<>(this, "controller", 0, state -> state.setAndContinue(IDLE))
+                .triggerableAnim("pour_oil", POUR));
+    }
+
+    public boolean isPouring() {
+        return pourStart >= 0;
+    }
+
+    public int pourAge() {
+        if (level == null || !isPouring()) return -1;
+        return (int) (level.getGameTime() - pourStart);
+    }
+
+    public boolean canPour() {
+        RemainsData data = getRemainsData();
+        return data != null && data.anointedTier().isEmpty() && !isPouring();
+    }
+
+    public void startPour(ServerLevel level, RemainsData.DecayTier oil) {
+        pourStart = level.getGameTime();
+        pourOil = oil;
+        sync();
+        triggerAnim("controller", "pour_oil");
+    }
+
+    public void dripOil(Vector3d at) {
+        if (level == null || level.getGameTime() == lastDripTick) return;
+        lastDripTick = level.getGameTime();
+        level.addParticle(ParticleTypes.FALLING_HONEY, at.x, at.y, at.z, 0, 0, 0);
+    }
+
+    private void finishPour(ServerLevel level) {
+        RemainsData.DecayTier oil = pourOil;
+        pourStart = -1;
+        pourOil = null;
+
+        RemainsData data = getRemainsData();
+        if (data == null || oil == null) { sync(); return; }
+
+        Vec3 c = remainsCenter();
+        if (oil == data.tier(level)) {
+            remains.set(ModDataComponents.REMAINS_DATA.get(), data.withAnointedTier(oil));
+            level.sendParticles(ParticleTypes.END_ROD, c.x, c.y + 0.2, c.z, 15, 0.3, 0.2, 0.3, 0.01);
+            level.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 1.0F, 0.8F);
+            sync();
+        } else if (data.displeasure() == 0) {
+            // First wrong oil
+            remains.set(ModDataComponents.REMAINS_DATA.get(), data.withDispleasure(1));
+            level.sendParticles(ParticleTypes.ANGRY_VILLAGER, c.x, c.y + 0.4, c.z, 6, 0.3, 0.1, 0.3, 0.0);
+            level.playSound(null, worldPosition, SoundEvents.SKELETON_HURT, SoundSource.BLOCKS, 0.8F, 0.5F);
+            sync();
+        } else {
+            // Second wrong oil
+            level.sendParticles(ParticleTypes.SOUL, c.x, c.y + 0.5, c.z, 40, 0.25, 0.4, 0.25, 0.04);
+            level.playSound(null, worldPosition, SoundEvents.PHANTOM_DEATH, SoundSource.BLOCKS, 1.0F, 1.0F);
+            crumbleToDust(level);
+        }
     }
 
     @Override

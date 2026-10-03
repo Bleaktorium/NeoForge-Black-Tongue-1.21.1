@@ -47,6 +47,9 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.WITCH_REMAINS.get());
                         output.accept(ModItems.ANCIENT_DUST.get());
                         output.accept(ModItems.EMBALMING_TABLE.get());
+                        output.accept(ModItems.BAT_OIL.get());
+                        output.accept(ModItems.SPIDER_OIL.get());
+                        output.accept(ModItems.DRYAD_OIL.get());
                     })
                     .build());
 }

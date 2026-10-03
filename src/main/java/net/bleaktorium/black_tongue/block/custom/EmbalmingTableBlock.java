@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.bleaktorium.black_tongue.block.entity.EmbalmingTableBlockEntity;
+import net.bleaktorium.black_tongue.item.custom.OilItem;
 import net.bleaktorium.black_tongue.item.custom.RemainsItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -66,10 +67,9 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
 
 
     public static Direction sideDirection(Direction facing) {
-        return facing.getCounterClockWise(); // change getCounterClockWise() to getClockWise()
+        return facing.getCounterClockWise();
     }
 
-    // Like the pillar's basePos(): from either half, find the half that owns the block entity.
     public static BlockPos mainPos(BlockState state, BlockPos pos) {
         return state.getValue(PART) == TablePart.MAIN
                 ? pos
@@ -81,7 +81,7 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction facing = context.getHorizontalDirection().getOpposite();
         BlockPos sidePos = context.getClickedPos().relative(sideDirection(facing));
-        if (!context.getLevel().getBlockState(sidePos).canBeReplaced(context)) return null; // no room
+        if (!context.getLevel().getBlockState(sidePos).canBeReplaced(context)) return null;
         return defaultBlockState().setValue(FACING, facing);
     }
 
@@ -97,7 +97,7 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
         Direction side = sideDirection(state.getValue(FACING));
         Direction toPartner = state.getValue(PART) == TablePart.MAIN ? side : side.getOpposite();
         if (direction == toPartner && !neighbor.is(this)) {
-            return Blocks.AIR.defaultBlockState(); // my other half is gone, so I go too
+            return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, direction, neighbor, level, pos, neighborPos);
     }
@@ -110,7 +110,6 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
         return super.playerWillDestroy(level, pos, state, player);
     }
 
-    // If the table is broken with remains on it, the remains drop instead of vanishing.
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())
@@ -135,7 +134,6 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
-    // Right-click with remains: lay them on the table.
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
@@ -145,16 +143,24 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide) {
-            table.placeRemains(stack.split(1)); // split(1) takes one item out of your hand
+            table.placeRemains(stack.split(1));
             level.playSound(null, pos, SoundEvents.BONE_BLOCK_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        if (stack.getItem() instanceof OilItem oil
+                && level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table
+                && table.canPour()) {
+            if (level instanceof ServerLevel serverLevel) {
+                table.startPour(serverLevel, oil.tier());
+                stack.consume(1, player);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
     }
 
-    // Right-click with an empty hand: pick them back up.
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table && !table.isEmpty()) {
+        if (level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table
+                && !table.isEmpty() && !table.isPouring()) {
             if (!level.isClientSide) {
                 ItemStack taken = table.takeRemains();
                 if (!player.addItem(taken)) player.drop(taken, false);

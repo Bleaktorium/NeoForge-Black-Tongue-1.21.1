@@ -91,6 +91,13 @@ public class ModItems {
     public static final DeferredItem<BlockItem> EMBALMING_TABLE = ITEMS.registerSimpleBlockItem(
             "embalming_table", ModBlocks.EMBALMING_TABLE);
 
+    public static final DeferredItem<OilItem> SPIDER_OIL = ITEMS.registerItem("spider_oil",
+            props -> new OilItem(RemainsData.DecayTier.FRESH, props), new Item.Properties().stacksTo(16));
+    public static final DeferredItem<OilItem> BAT_OIL = ITEMS.registerItem("bat_oil",
+            props -> new OilItem(RemainsData.DecayTier.ROTTEN, props), new Item.Properties().stacksTo(16));
+    public static final DeferredItem<OilItem> DRYAD_OIL = ITEMS.registerItem("dryad_oil",
+            props -> new OilItem(RemainsData.DecayTier.CRUMBLING, props), new Item.Properties().stacksTo(16));
+
     public static final DeferredItem<RemainsItem> ANCESTRAL_REMAINS = ITEMS.registerItem("ancestral_remains",
             props -> new RemainsItem(RemainsData.Origin.ANCESTOR, props), new Item.Properties().stacksTo(1));
     public static final DeferredItem<RemainsItem> WITCH_REMAINS = ITEMS.registerItem("witch_remains",
