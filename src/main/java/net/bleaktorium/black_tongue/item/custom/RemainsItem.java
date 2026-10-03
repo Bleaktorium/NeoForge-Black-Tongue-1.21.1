@@ -1,11 +1,15 @@
 package net.bleaktorium.black_tongue.item.custom;
 
 import net.bleaktorium.black_tongue.coven.ModDataComponents;
+import net.bleaktorium.black_tongue.item.ModItems;
 import net.bleaktorium.black_tongue.remains.RemainsData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -24,9 +28,20 @@ public class RemainsItem extends Item {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (level.isClientSide) return;
+
         if (!stack.has(ModDataComponents.REMAINS_DATA.get())) {
             String name = origin == RemainsData.Origin.ANCESTOR ? "Unknown Ancestor" : "Unknown Witch";
             stack.set(ModDataComponents.REMAINS_DATA.get(), RemainsData.collectedNow(origin, name, level));
+        }
+
+        RemainsData data = stack.get(ModDataComponents.REMAINS_DATA.get());
+        if (data != null && data.tier(level) == RemainsData.DecayTier.DUST && entity instanceof Player player) {
+            ItemStack dust = new ItemStack(ModItems.ANCIENT_DUST.get(), stack.getCount());
+            stack.setCount(0);
+            if (!player.getInventory().add(dust)) {
+                player.drop(dust, false);
+            }
+            level.playSound(null, player.blockPosition(), SoundEvents.SAND_BREAK, SoundSource.PLAYERS, 0.8F, 0.6F);
         }
     }
 

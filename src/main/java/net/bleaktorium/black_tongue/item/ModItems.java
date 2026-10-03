@@ -93,5 +93,6 @@ public class ModItems {
             props -> new RemainsItem(RemainsData.Origin.ANCESTOR, props), new Item.Properties().stacksTo(1));
     public static final DeferredItem<RemainsItem> WITCH_REMAINS = ITEMS.registerItem("witch_remains",
             props -> new RemainsItem(RemainsData.Origin.WITCH, props), new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> ANCIENT_DUST = ITEMS.registerSimpleItem("ancient_dust", new Item.Properties());
 
 }
