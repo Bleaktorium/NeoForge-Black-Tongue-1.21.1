@@ -88,6 +88,8 @@ public class ModItems {
     // ANCESTORS
     public static final DeferredItem<BlockItem> ANCESTRAL_PILLAR = ITEMS.registerSimpleBlockItem(
             "ancestral_pillar", ModBlocks.ANCESTRAL_PILLAR);
+    public static final DeferredItem<BlockItem> EMBALMING_TABLE = ITEMS.registerSimpleBlockItem(
+            "embalming_table", ModBlocks.EMBALMING_TABLE);
 
     public static final DeferredItem<RemainsItem> ANCESTRAL_REMAINS = ITEMS.registerItem("ancestral_remains",
             props -> new RemainsItem(RemainsData.Origin.ANCESTOR, props), new Item.Properties().stacksTo(1));

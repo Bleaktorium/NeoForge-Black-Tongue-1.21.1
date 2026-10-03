@@ -45,4 +45,8 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("ancestral_pillar_be",
                     () -> BlockEntityType.Builder.of(AncestralPillarBlockEntity::new, ModBlocks.ANCESTRAL_PILLAR.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EmbalmingTableBlockEntity>> EMBALMING_TABLE_BE =
+            BLOCK_ENTITIES.register("embalming_table_be",
+                    () -> BlockEntityType.Builder.of(EmbalmingTableBlockEntity::new, ModBlocks.EMBALMING_TABLE.get()).build(null));
+
 }

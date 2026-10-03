@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:block",
+  "pools": [{
+    "rolls": 1,
+    "entries": [{ "type": "minecraft:item", "name": "black_tongue:embalming_table" }],
+    "conditions": [
+      { "condition": "minecraft:block_state_property", "block": "black_tongue:embalming_table", "properties": { "part": "main" } },
+      { "condition": "minecraft:survives_explosion" }
+    ]
+  }]
+}

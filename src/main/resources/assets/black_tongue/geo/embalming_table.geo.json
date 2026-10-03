@@ -1999,10 +1999,12 @@
 								"down": {"uv": [5.5, 18.5], "uv_size": [-2.5, -0.5]}
 							}
 						}
-					],
-					"locators": {
-						"pouring_effect": [6.65, 6.65, -9.5]
-					}
+					]
+				},
+				{
+					"name": "pour_point",
+					"parent": "dish",
+					"pivot": [6.65, 6.65, -9.5]
 				}
 			]
 		}

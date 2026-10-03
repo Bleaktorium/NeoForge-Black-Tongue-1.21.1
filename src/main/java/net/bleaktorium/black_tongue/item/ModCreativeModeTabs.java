@@ -46,6 +46,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.ANCESTRAL_REMAINS.get());
                         output.accept(ModItems.WITCH_REMAINS.get());
                         output.accept(ModItems.ANCIENT_DUST.get());
+                        output.accept(ModItems.EMBALMING_TABLE.get());
                     })
                     .build());
 }

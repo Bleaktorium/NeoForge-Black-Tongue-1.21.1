@@ -61,4 +61,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<AncestralPillarBlock> ANCESTRAL_PILLAR = BLOCKS.register("ancestral_pillar",
             () -> new AncestralPillarBlock(BlockBehaviour.Properties.of().strength(4.0f).noOcclusion()));
+
+    public static final DeferredBlock<EmbalmingTableBlock> EMBALMING_TABLE = BLOCKS.register("embalming_table",
+            () -> new EmbalmingTableBlock(BlockBehaviour.Properties.of().strength(2.5f).noOcclusion()));
 }
