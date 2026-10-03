@@ -16,14 +16,12 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -37,14 +35,18 @@ public class AncestralPillarBlock extends BaseEntityBlock {
 
     public AncestralPillarBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(PART, PillarPart.BOTTOM));
+        registerDefaultState(stateDefinition.any()
+                .setValue(PART, PillarPart.BOTTOM)
+                .setValue(FACING, Direction.NORTH));
     }
 
     public enum PillarPart implements StringRepresentable {
         BOTTOM("bottom"), MIDDLE("middle"), TOP("top");
         private final String name;
-        PillarPart(String name) { this.name = name; }
-        @Override public String getSerializedName() { return name; }
+        PillarPart(String name) {
+            this.name = name; }
+        @Override public String getSerializedName() {
+            return name; }
     }
 
     public static final EnumProperty<PillarPart> PART = EnumProperty.create("part", PillarPart.class);
@@ -54,10 +56,17 @@ public class AncestralPillarBlock extends BaseEntityBlock {
     private static final VoxelShape TOP_SHAPE = Shapes.or(
             Block.box(3, 0, 4, 13, 16, 12),
             Block.box(5, 16, 5.25, 11, 17, 11.25));
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    private static final VoxelShape BOTTOM_NS = Block.box(1, 0, 2, 15, 16, 14);
+    private static final VoxelShape BOTTOM_EW = Block.box(2, 0, 1, 14, 16, 15);
+    private static final VoxelShape MIDDLE_NS = Block.box(2, 0, 3, 14, 16, 13);
+    private static final VoxelShape MIDDLE_EW = Block.box(3, 0, 2, 13, 16, 14);
+    private static final VoxelShape TOP_NS = Shapes.or(Block.box(3, 0, 4, 13, 16, 12), Block.box(5, 16, 5.25, 11, 17, 11.25));
+    private static final VoxelShape TOP_EW = Shapes.or(Block.box(4, 0, 3, 12, 16, 13), Block.box(5.25, 16, 5, 11.25, 17, 11));
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(PART);
+        builder.add(PART, FACING);
     }
 
     @Nullable
@@ -65,11 +74,10 @@ public class AncestralPillarBlock extends BaseEntityBlock {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        // refuse if there isn't room for the whole pillar
         if (pos.getY() + 2 >= level.getMaxBuildHeight()) return null;
         if (!level.getBlockState(pos.above()).canBeReplaced(context)) return null;
         if (!level.getBlockState(pos.above(2)).canBeReplaced(context)) return null;
-        return defaultBlockState();
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -87,11 +95,22 @@ public class AncestralPillarBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        boolean eastWest = state.getValue(FACING).getAxis() == Direction.Axis.X;
         return switch (state.getValue(PART)) {
-            case BOTTOM -> BOTTOM_SHAPE;
-            case MIDDLE -> MIDDLE_SHAPE;
-            case TOP -> TOP_SHAPE;
+            case BOTTOM -> eastWest ? BOTTOM_EW : BOTTOM_NS;
+            case MIDDLE -> eastWest ? MIDDLE_EW : MIDDLE_NS;
+            case TOP -> eastWest ? TOP_EW : TOP_NS;
         };
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     private boolean isPartOfMe(BlockState neighbor) {
