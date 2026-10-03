@@ -41,4 +41,8 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("paganka_root_crop_be",
                     () -> BlockEntityType.Builder.of(PagankaRootCropBlockEntity::new, ModBlocks.PAGANKA_ROOT.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AncestralPillarBlockEntity>> ANCESTRAL_PILLAR_BE =
+            BLOCK_ENTITIES.register("ancestral_pillar_be",
+                    () -> BlockEntityType.Builder.of(AncestralPillarBlockEntity::new, ModBlocks.ANCESTRAL_PILLAR.get()).build(null));
+
 }

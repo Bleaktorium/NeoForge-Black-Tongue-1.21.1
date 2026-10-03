@@ -58,4 +58,7 @@ public class ModBlocks {
                     .noCollission()
                     .randomTicks(),
                     5, ModItems.PAGANKA_ROOT_SEEDS));
+
+    public static final DeferredBlock<AncestralPillarBlock> ANCESTRAL_PILLAR = BLOCKS.register("ancestral_pillar",
+            () -> new AncestralPillarBlock(BlockBehaviour.Properties.of().strength(4.0f).noOcclusion()));
 }

@@ -42,6 +42,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.DEVILSTHORN_SEEDS.get());
                         output.accept(ModItems.PAGANKA_ROOT_SEEDS.get());
                         output.accept(ModItems.PAGANKA_ROOT.get());
+                        output.accept(ModItems.ANCESTRAL_PILLAR.get());
                     })
                     .build());
 }

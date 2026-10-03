@@ -111,6 +111,7 @@ public class Black_Tongue {
             event.registerBlockEntityRenderer(ModBlockEntities.DRYING_RACK_BE.get(), context -> new DryingRackRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.PAGANKA_ROOT_CROP_BE.get(), context -> new PagankaRootCropRenderer());
             event.registerEntityRenderer(ModEntities.PAGANKA_ROOT.get(), PagankaRootRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.ANCESTRAL_PILLAR_BE.get(), context -> new AncestralPillarRenderer());
         }
 
         @SubscribeEvent

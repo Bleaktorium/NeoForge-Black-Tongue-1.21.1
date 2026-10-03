@@ -84,4 +84,8 @@ public class ModItems {
     // GRINDED MATS
     public static final DeferredItem<Item> MOTHLEAF_DUST = ITEMS.registerSimpleItem("mothleaf_dust", new Item.Properties());
 
+    // ANCESTORS
+    public static final DeferredItem<BlockItem> ANCESTRAL_PILLAR = ITEMS.registerSimpleBlockItem(
+            "ancestral_pillar", ModBlocks.ANCESTRAL_PILLAR);
+
 }
