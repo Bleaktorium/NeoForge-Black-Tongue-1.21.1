@@ -42,11 +42,11 @@ import java.util.UUID;
 
 public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntity {
 
-    // --- GeckoLib ---
+    // GeckoLib
     private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    // --- Tuning knobs ---
+    // Tuning knobs
     private static final boolean SHOW_RITUAL_MATH = true; // testing aid: math readout and recipe hints
     private static final int CAST_TICKS = 10 * 20;
     private static final double TAMPER_PENALTY = 25.0;
@@ -112,7 +112,7 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         super(ModBlockEntities.RITUAL_TABLE_BE.get(), pos, state);
     }
 
-    //GeckoLib
+    // GeckoLib
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, state -> state.setAndContinue(IDLE)));
@@ -143,6 +143,10 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
 
         WitchIdentity identity = WitchIdentityPool.getByName(name);
         return identity.name().equals(name) ? identity : null;
+    }
+
+    private static String witchKey(AmuletBinding binding, WitchIdentity witch) {
+        return binding.soulId().map(UUID::toString).orElse(witch.name());
     }
 
     private static AABB seatColumn(BlockPos seat) {
@@ -264,25 +268,14 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         for (SeatView seat : seats) {
             snapshot.add(new Watched(seat.pos(), serverLevel.getBlockState(seat.pos()), seat.stored().copy(), false));
 
-            if (seat.witch() != null && seatedWitches.add(seat.witch().name())) {
+            String key = seat.witch() != null ? witchKey(seat.binding(), seat.witch()) : null;
+            if (key != null && seatedWitches.add(key)) {
                 amp += seat.witch().ritualAmplification();
                 stabilitySum += seat.witch().ritualStability();
                 contributors++;
                 witchSeats.add(new WitchSeat(seat.pos(), seat.binding()));
-                people.add(RitualParticipant.witch(seat.witch()));
+                people.add(RitualParticipant.witch(seat.witch(), key));
             } else if (seat.standing() != null) {
-                newPlayerSeats.add(new PlayerSeat(seat.standing().getUUID(), seat.pos()));
-                if (!seat.standing().getUUID().equals(player.getUUID())) {
-                    amp += RitualMath.PLAYER_PARTICIPANT_AMPLIFICATION;
-                    stabilitySum += RitualMath.PLAYER_PARTICIPANT_STABILITY;
-                    contributors++;
-                    people.add(RitualParticipant.player(seat.standing()));
-                }
-
-            } else {
-                contributors++;
-            }
-        }
 
         for (BlockPos offset : RitualTableBlock.RING_OFFSETS) {
             BlockPos stonePos = worldPosition.offset(offset);

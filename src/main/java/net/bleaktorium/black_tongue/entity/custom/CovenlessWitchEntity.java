@@ -111,7 +111,7 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         if (!this.level().isClientSide && !this.dead && this.level() instanceof ServerLevel serverLevel) {
             FallenWitchesData.get(serverLevel.getServer()).markFallen(getSoulId());
             String name = getIdentity().name();
-            List<Coven> leftCovens = CovenService.removeDeadWitch(serverLevel.getServer(), name);
+            List<Coven> leftCovens = CovenService.removeDeadWitch(serverLevel.getServer(), getSoulId().toString());
 
             if (!leftCovens.isEmpty()) {
                 ItemStack remains = new ItemStack(ModItems.WITCH_REMAINS.get());

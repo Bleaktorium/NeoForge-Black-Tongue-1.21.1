@@ -11,7 +11,7 @@ public record RitualParticipant(Kind kind, String key, String displayName, boole
         return new RitualParticipant(Kind.PLAYER, p.getUUID().toString(), p.getName().getString(), false);
     }
 
-    public static RitualParticipant witch(WitchIdentity w) {
-        return new RitualParticipant(Kind.WITCH, w.name(), w.name(), w.covenMotherTier());
+    public static RitualParticipant witch(WitchIdentity w, String key) {
+        return new RitualParticipant(Kind.WITCH, key, w.name(), w.covenMotherTier());
     }
 }
