@@ -193,6 +193,31 @@ public class EmbalmingTableBlockEntity extends BlockEntity implements GeoBlockEn
         }
     }
 
+    public boolean canWrap() {
+        RemainsData data = getRemainsData();
+        return data != null && data.anointedTier().isPresent() && !isPouring();
+    }
+
+    public void wrap(ServerLevel level) {
+        RemainsData data = getRemainsData();
+        if (data == null) return;
+
+        ItemStack consecrated = new ItemStack(ModItems.CONSECRATED_REMAINS.get());
+        consecrated.set(ModDataComponents.REMAINS_DATA.get(), data); // same name, same frozen tier
+        remains = ItemStack.EMPTY;
+        sync();
+
+        Vec3 c = remainsCenter();
+        level.sendParticles(ParticleTypes.POOF, c.x, c.y, c.z, 20, 0.4, 0.1, 0.2, 0.02);
+        level.sendParticles(ParticleTypes.END_ROD, c.x, c.y + 0.2, c.z, 6, 0.2, 0.2, 0.2, 0.01);
+        level.playSound(null, worldPosition, SoundEvents.WOOL_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
+        level.playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+        ItemEntity drop = new ItemEntity(level, c.x, c.y + 0.1, c.z, consecrated);
+        drop.setDeltaMovement(0, 0.15, 0);
+        level.addFreshEntity(drop);
+    }
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache; }

@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.bleaktorium.black_tongue.block.entity.EmbalmingTableBlockEntity;
+import net.bleaktorium.black_tongue.item.ModItems;
 import net.bleaktorium.black_tongue.item.custom.OilItem;
 import net.bleaktorium.black_tongue.item.custom.RemainsItem;
 import net.minecraft.core.BlockPos;
@@ -137,28 +138,38 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!(level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
         // 1. Oil
-        if (stack.getItem() instanceof OilItem oil
-                && level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity pourTable
-                && pourTable.canPour()) {
+        if (stack.getItem() instanceof OilItem oil && table.canPour()) {
             if (level instanceof ServerLevel serverLevel) {
-                pourTable.startPour(serverLevel, oil.tier());
+                table.startPour(serverLevel, oil.tier());
                 stack.consume(1, player);
             }
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        // 2. Remains
-        if (!(stack.getItem() instanceof RemainsItem)
-                || !(level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table)
-                || !table.isEmpty()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        // 2. Ancestor Wrap
+        if (stack.is(ModItems.ANCESTOR_WRAP.get()) && table.canWrap()) {
+            if (level instanceof ServerLevel serverLevel) {
+                table.wrap(serverLevel);
+                stack.consume(1, player);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        if (!level.isClientSide) {
-            table.placeRemains(stack.split(1));
-            level.playSound(null, pos, SoundEvents.BONE_BLOCK_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
+
+        // 3. Remains
+        if (stack.getItem() instanceof RemainsItem && table.isEmpty()) {
+            if (!level.isClientSide) {
+                table.placeRemains(stack.split(1));
+                level.playSound(null, pos, SoundEvents.BONE_BLOCK_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

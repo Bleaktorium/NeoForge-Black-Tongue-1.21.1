@@ -50,6 +50,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.BAT_OIL.get());
                         output.accept(ModItems.SPIDER_OIL.get());
                         output.accept(ModItems.DRYAD_OIL.get());
+                        output.accept(ModItems.ANCESTOR_WRAP.get());
                     })
                     .build());
 }
