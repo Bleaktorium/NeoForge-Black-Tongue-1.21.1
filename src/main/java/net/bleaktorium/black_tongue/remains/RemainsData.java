@@ -54,7 +54,7 @@ public record RemainsData(Origin origin, String name, long dayCollected,
             Origin.CODEC.fieldOf("origin").forGetter(RemainsData::origin),
             Codec.STRING.fieldOf("name").forGetter(RemainsData::name),
             Codec.LONG.fieldOf("day_collected").forGetter(RemainsData::dayCollected),
-            DecayTier.CODEC.optionalFieldOf("anointed_tier").forGetter(RemainsData::anointedTier)
+            DecayTier.CODEC.optionalFieldOf("anointed_tier").forGetter(RemainsData::anointedTier),
             Codec.INT.optionalFieldOf("displeasure", 0).forGetter(RemainsData::displeasure)
     ).apply(instance, RemainsData::new));
 

@@ -137,6 +137,18 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
+        // 1. Oil
+        if (stack.getItem() instanceof OilItem oil
+                && level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity pourTable
+                && pourTable.canPour()) {
+            if (level instanceof ServerLevel serverLevel) {
+                pourTable.startPour(serverLevel, oil.tier());
+                stack.consume(1, player);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+
+        // 2. Remains
         if (!(stack.getItem() instanceof RemainsItem)
                 || !(level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table)
                 || !table.isEmpty()) {
@@ -146,15 +158,7 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
             table.placeRemains(stack.split(1));
             level.playSound(null, pos, SoundEvents.BONE_BLOCK_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
         }
-        if (stack.getItem() instanceof OilItem oil
-                && level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table
-                && table.canPour()) {
-            if (level instanceof ServerLevel serverLevel) {
-                table.startPour(serverLevel, oil.tier());
-                stack.consume(1, player);
-            }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        }
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
