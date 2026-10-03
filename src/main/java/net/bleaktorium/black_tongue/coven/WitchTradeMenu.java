@@ -13,7 +13,7 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
@@ -86,7 +86,7 @@ public class WitchTradeMenu extends AbstractContainerMenu {
         return reputationData.get(0);
     }
     public String getWitchName() {
-        return repKey;
+        return witchName;
     }
 
     @Override

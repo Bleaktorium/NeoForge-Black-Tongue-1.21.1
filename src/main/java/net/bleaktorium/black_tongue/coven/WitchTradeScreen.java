@@ -34,7 +34,7 @@ public class WitchTradeScreen extends AbstractContainerScreen<WitchTradeMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        // intentionally empty
+
     }
 
     private int lastSeenReputation = -1;
@@ -46,7 +46,7 @@ public class WitchTradeScreen extends AbstractContainerScreen<WitchTradeMenu> {
 
         int currentRep = menu.getReputation();
         if (lastSeenReputation != -1 && currentRep > lastSeenReputation) {
-            flairTextUntil = System.currentTimeMillis() + 3000; // 3 sec
+            flairTextUntil = System.currentTimeMillis() + 3000;
         }
         lastSeenReputation = currentRep;
 
@@ -109,22 +109,22 @@ public class WitchTradeScreen extends AbstractContainerScreen<WitchTradeMenu> {
             List<ItemStack> inputs = offer.inputs();
 
             graphics.renderItem(inputs.get(0), listX, listY);
-            graphics.renderItemDecorations(font, inputs.get(0), listX, listY); // NEW — draws the count number
+            graphics.renderItemDecorations(font, inputs.get(0), listX, listY);
 
             if (inputs.size() > 1) {
                 graphics.pose().pushPose();
                 graphics.pose().translate(listX + 10, listY + 8, 200);
                 graphics.pose().scale(0.6f, 0.6f, 1f);
                 graphics.renderItem(inputs.get(1), 0, 0);
-                graphics.renderItemDecorations(font, inputs.get(1), 0, 0); // NEW
+                graphics.renderItemDecorations(font, inputs.get(1), 0, 0);
                 graphics.pose().popPose();
             }
 
             graphics.drawString(font, "\u2192", listX + 20, listY + 4, 0xCEC7BA, false);
 
-            ItemStack resultStack = offer.resolveOutput(menu.getWitchName());
+            ItemStack resultStack = offer.resolveOutput(menu.getWitchName(), null);
             graphics.renderItem(resultStack, listX + 34, listY);
-            graphics.renderItemDecorations(font, resultStack, listX + 34, listY); // NEW
+            graphics.renderItemDecorations(font, resultStack, listX + 34, listY);
 
             listY += rowHeight;
         }

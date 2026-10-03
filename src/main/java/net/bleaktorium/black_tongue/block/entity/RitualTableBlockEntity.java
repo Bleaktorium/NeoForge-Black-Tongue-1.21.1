@@ -174,7 +174,8 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             if (binding != null && binding.soulId().isPresent()
                     && FallenWitchesData.get(serverLevel.getServer()).isFallen(binding.soulId().get())) {
                 witch = null;
-            }            ServerPlayer standing = stored.isEmpty() ? playerStandingOn(serverLevel, stonePos) : null;
+            }
+            ServerPlayer standing = stored.isEmpty() ? playerStandingOn(serverLevel, stonePos) : null;
 
             seats.add(new SeatView(stonePos, offset, stoneState.getValue(MoonPhaseRuneBlock.PHASE),
                     stored, binding, witch, standing));
