@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:block",
+  "pools": [{
+    "rolls": 1,
+    "entries": [{ "type": "minecraft:item", "name": "black_tongue:ancestral_pillar" }],
+    "conditions": [
+      { "condition": "minecraft:block_state_property", "block": "black_tongue:ancestral_pillar", "properties": { "part": "bottom" } },
+      { "condition": "minecraft:survives_explosion" }
+    ]
+  }]
+}
