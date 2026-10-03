@@ -18,6 +18,11 @@ public class RitualMath {
     public static final int PLAYER_PARTICIPANT_AMPLIFICATION = 25;
     public static final int PLAYER_PARTICIPANT_STABILITY = 75;
 
+    public static final int ANCESTOR_AMPLIFICATION = 20;
+    public static final int ANCESTOR_STABILITY = 90;
+    public static final int COVEN_REMAINS_AMPLIFICATION = 10;
+    public static final int COVEN_REMAINS_STABILITY = 80;
+
 
 
     public enum RitualOutcome {

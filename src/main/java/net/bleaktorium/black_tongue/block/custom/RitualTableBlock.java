@@ -31,6 +31,13 @@ public class RitualTableBlock extends BaseEntityBlock {
             new BlockPos(4, -1, 0)
     );
 
+    public static final List<BlockPos> PILLAR_OFFSETS = List.of(
+            new BlockPos(0, 0, -6),
+            new BlockPos(0, 0, 6),
+            new BlockPos(-6, 0, 0),
+            new BlockPos(6, 0, 0)
+    );
+
     // The other 20 positions that complete the circle's curve
     public static final List<BlockPos> RING_OFFSETS = List.of(
             new BlockPos(-2, -1, -4), new BlockPos(-1, -1, -4), new BlockPos(1, -1, -4), new BlockPos(2, -1, -4),

@@ -1,9 +1,6 @@
 package net.bleaktorium.black_tongue.block.entity;
 
-import net.bleaktorium.black_tongue.block.custom.MoonPhase;
-import net.bleaktorium.black_tongue.block.custom.MoonPhaseRuneBlock;
-import net.bleaktorium.black_tongue.block.custom.RitualTableBlock;
-import net.bleaktorium.black_tongue.block.custom.RunicStoneBlock;
+import net.bleaktorium.black_tongue.block.custom.*;
 import net.bleaktorium.black_tongue.coven.*;
 import net.bleaktorium.black_tongue.entity.custom.WitchIdentity;
 import net.bleaktorium.black_tongue.entity.custom.WitchIdentityPool;
@@ -309,6 +306,28 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
                 }
                 case BLANK -> { }
             }
+        }
+
+        for (BlockPos offset : RitualTableBlock.PILLAR_OFFSETS) {
+            BlockPos pillarPos = worldPosition.offset(offset);
+            BlockState pillarState = level.getBlockState(pillarPos);
+            if (!(pillarState.getBlock() instanceof AncestralPillarBlock)
+                    || pillarState.getValue(AncestralPillarBlock.PART) != AncestralPillarBlock.PillarPart.BOTTOM) continue;
+            if (!(level.getBlockEntity(pillarPos) instanceof AncestralPillarBlockEntity pillar) || pillar.isEmpty()) continue;
+
+            switch (pillar.getOccupant()) {
+                case ANCESTOR -> {
+                    amp += RitualMath.ANCESTOR_AMPLIFICATION;
+                    stabilitySum += RitualMath.ANCESTOR_STABILITY;
+                }
+                case WITCH -> {
+                    amp += RitualMath.COVEN_REMAINS_AMPLIFICATION;
+                    stabilitySum += RitualMath.COVEN_REMAINS_STABILITY;
+                }
+                default -> { }
+            }
+            contributors++;
+            snapshot.add(new Watched(pillarPos, pillarState, ItemStack.EMPTY, false));
         }
 
         if (offerings < recipe.minOfferings()) {
