@@ -1,6 +1,7 @@
 package net.bleaktorium.black_tongue.coven;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
+import net.bleaktorium.black_tongue.remains.RemainsData;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -16,5 +17,11 @@ public class ModDataComponents {
             "amulet_binding", () -> DataComponentType.<AmuletBinding>builder()
                     .persistent(AmuletBinding.CODEC)
                     .networkSynchronized(AmuletBinding.STREAM_CODEC)
+                    .build());
+
+    public static final Supplier<DataComponentType<RemainsData>> REMAINS_DATA = DATA_COMPONENTS.register(
+            "remains_data", () -> DataComponentType.<RemainsData>builder()
+                    .persistent(RemainsData.CODEC)
+                    .networkSynchronized(RemainsData.STREAM_CODEC)
                     .build());
 }

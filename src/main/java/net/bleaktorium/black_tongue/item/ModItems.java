@@ -3,6 +3,7 @@ package net.bleaktorium.black_tongue.item;
 import net.bleaktorium.black_tongue.Black_Tongue;
 import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.item.custom.*;
+import net.bleaktorium.black_tongue.remains.RemainsData;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -87,5 +88,10 @@ public class ModItems {
     // ANCESTORS
     public static final DeferredItem<BlockItem> ANCESTRAL_PILLAR = ITEMS.registerSimpleBlockItem(
             "ancestral_pillar", ModBlocks.ANCESTRAL_PILLAR);
+
+    public static final DeferredItem<RemainsItem> ANCESTRAL_REMAINS = ITEMS.registerItem("ancestral_remains",
+            props -> new RemainsItem(RemainsData.Origin.ANCESTOR, props), new Item.Properties().stacksTo(1));
+    public static final DeferredItem<RemainsItem> WITCH_REMAINS = ITEMS.registerItem("witch_remains",
+            props -> new RemainsItem(RemainsData.Origin.WITCH, props), new Item.Properties().stacksTo(1));
 
 }

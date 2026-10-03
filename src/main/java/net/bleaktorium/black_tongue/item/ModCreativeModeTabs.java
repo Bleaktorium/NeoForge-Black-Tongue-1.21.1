@@ -43,6 +43,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.PAGANKA_ROOT_SEEDS.get());
                         output.accept(ModItems.PAGANKA_ROOT.get());
                         output.accept(ModItems.ANCESTRAL_PILLAR.get());
+                        output.accept(ModItems.ANCESTRAL_REMAINS.get());
+                        output.accept(ModItems.WITCH_REMAINS.get());
                     })
                     .build());
 }
