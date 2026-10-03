@@ -12,11 +12,17 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
 public class WitchTradeMenu extends AbstractContainerMenu {
 
     private final String witchName;
+    @Nullable
+    private final UUID soulId;
+    private final String repKey;
     private final ServerPlayer serverPlayer;
     private final SimpleContainer inputContainer = new SimpleContainer(2);
     private final SimpleContainer outputContainer = new SimpleContainer(1);
@@ -24,16 +30,18 @@ public class WitchTradeMenu extends AbstractContainerMenu {
     private final ContainerData reputationData = new SimpleContainerData(1);
 
     public WitchTradeMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf buf) {
-        this(containerId, inv, buf.readUtf(), null);
+        this(containerId, inv, buf.readUtf(), null, null);
     }
 
-    public WitchTradeMenu(int containerId, Inventory inv, String witchName, ServerPlayer serverPlayer) {
+    public WitchTradeMenu(int containerId, Inventory inv, String witchName, @Nullable UUID soulId, ServerPlayer serverPlayer) {
         super(ModMenuTypes.WITCH_TRADE.get(), containerId);
         this.witchName = witchName;
+        this.soulId = soulId;
+        this.repKey = soulId != null ? soulId.toString() : witchName;
         this.serverPlayer = serverPlayer;
 
         if (serverPlayer != null) {
-            reputationData.set(0, WitchReputationHelper.getReputation(serverPlayer, witchName));
+            reputationData.set(0, WitchReputationHelper.getReputation(serverPlayer, repKey));
         }
         addDataSlots(reputationData);
 
@@ -78,7 +86,7 @@ public class WitchTradeMenu extends AbstractContainerMenu {
         return reputationData.get(0);
     }
     public String getWitchName() {
-        return witchName;
+        return repKey;
     }
 
     @Override
@@ -99,7 +107,7 @@ public class WitchTradeMenu extends AbstractContainerMenu {
         ItemStack in0 = inputContainer.getItem(0);
         ItemStack in1 = inputContainer.getItem(1);
 
-        int reputation = WitchReputationHelper.getReputation(serverPlayer, witchName);
+        int reputation = WitchReputationHelper.getReputation(serverPlayer, repKey);
         List<WitchTradeOffer> available = WitchTradePool.getAvailableOffers(witchName, reputation);
 
         activeOffer = available.stream()
@@ -107,7 +115,7 @@ public class WitchTradeMenu extends AbstractContainerMenu {
                 .findFirst()
                 .orElse(null);
 
-        outputContainer.setItem(0, activeOffer != null ? activeOffer.resolveOutput(witchName) : ItemStack.EMPTY);
+        outputContainer.setItem(0, activeOffer != null ? activeOffer.resolveOutput(witchName, soulId) : ItemStack.EMPTY);
     }
 
     private void completeTrade() {
@@ -119,8 +127,8 @@ public class WitchTradeMenu extends AbstractContainerMenu {
             inputContainer.getItem(1).shrink(required.get(1).getCount());
         }
 
-        WitchReputationHelper.adjustReputation(serverPlayer, witchName, 1);
-            reputationData.set(0, WitchReputationHelper.getReputation(serverPlayer, witchName));
+        WitchReputationHelper.adjustReputation(serverPlayer, repKey, 1);
+            reputationData.set(0, WitchReputationHelper.getReputation(serverPlayer, repKey));
 
         recomputeMatch();
     }

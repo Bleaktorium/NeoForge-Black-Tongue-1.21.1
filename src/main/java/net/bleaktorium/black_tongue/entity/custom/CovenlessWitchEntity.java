@@ -162,8 +162,9 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
 
         if (player instanceof ServerPlayer serverPlayer) {
             String name = getIdentity().name();
+            UUID soul = getSoulId();
             serverPlayer.openMenu(new SimpleMenuProvider(
-                    (containerId, inv, p) -> new WitchTradeMenu(containerId, inv, name, (ServerPlayer) p),
+                    (containerId, inv, p) -> new WitchTradeMenu(containerId, inv, name, soul, (ServerPlayer) p),
                     Component.literal(name)
             ), buf -> buf.writeUtf(name));
         }

@@ -111,8 +111,6 @@ public class CovenSummoningAmuletItem extends Item {
 
         witch.setIdentity(WitchIdentityPool.getByName(witchName));
 
-        // Amulets from before souls existed: give her one now and write it into the amulet,
-        // so from here on this amulet always calls this same witch.
         UUID soul = binding.soulId().orElseGet(UUID::randomUUID);
         witch.setSoulId(soul);
         if (binding.soulId().isEmpty()) {

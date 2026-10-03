@@ -12,7 +12,7 @@ public class OpenWitchTradeServerHandler {
             if (context.player() instanceof ServerPlayer serverPlayer) {
                 String name = packet.witchName();
                 serverPlayer.openMenu(new SimpleMenuProvider(
-                        (containerId, inv, p) -> new WitchTradeMenu(containerId, inv, name, (ServerPlayer) p),
+                        (containerId, inv, p) -> new WitchTradeMenu(containerId, inv, name, null, (ServerPlayer) p),
                         Component.literal(name)
                 ), buf -> buf.writeUtf(name));
             }

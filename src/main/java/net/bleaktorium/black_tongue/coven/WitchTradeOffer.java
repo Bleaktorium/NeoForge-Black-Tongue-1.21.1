@@ -2,8 +2,11 @@ package net.bleaktorium.black_tongue.coven;
 
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public record WitchTradeOffer(List<ItemStack> inputs, ItemStack output, int requiredReputation, boolean isAmuletReward) {
 
@@ -15,11 +18,11 @@ public record WitchTradeOffer(List<ItemStack> inputs, ItemStack output, int requ
         return new WitchTradeOffer(List.of(inputs), ItemStack.EMPTY, requiredReputation, true);
     }
 
-    public ItemStack resolveOutput(String witchName) {
+    public ItemStack resolveOutput(String witchName, @Nullable UUID soulId) {
         if (isAmuletReward) {
             ItemStack amulet = new ItemStack(ModItems.COVEN_SUMMONING_AMULET.get());
-            amulet.set(net.bleaktorium.black_tongue.coven.ModDataComponents.AMULET_BINDING.get(),
-                    new AmuletBinding(SummonedWitchType.COVENLESS_WITCH, Optional.of(witchName)));
+            amulet.set(ModDataComponents.AMULET_BINDING.get(),
+                    new AmuletBinding(SummonedWitchType.COVENLESS_WITCH, Optional.of(witchName), Optional.ofNullable(soulId)));
             return amulet;
         }
         return output.copy();
