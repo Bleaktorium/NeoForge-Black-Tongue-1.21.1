@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue.item.custom;
 
 import net.bleaktorium.black_tongue.block.ModBlocks;
 import net.bleaktorium.black_tongue.coven.AmuletBinding;
+import net.bleaktorium.black_tongue.coven.FallenWitchesData;
 import net.bleaktorium.black_tongue.coven.ModDataComponents;
 import net.bleaktorium.black_tongue.entity.ModEntities;
 import net.bleaktorium.black_tongue.entity.custom.CovenMotherEntity;
@@ -10,6 +11,9 @@ import net.bleaktorium.black_tongue.entity.custom.WitchIdentity;
 import net.bleaktorium.black_tongue.entity.custom.WitchIdentityPool;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -18,9 +22,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+
+import javax.annotation.Nullable;
 
 public class CovenSummoningAmuletItem extends Item {
 
@@ -28,6 +37,7 @@ public class CovenSummoningAmuletItem extends Item {
     private static final int REQUIRED_BOOKSHELVES = 6;
 
     public CovenSummoningAmuletItem(Properties properties) {
+
         super(properties);
     }
 
@@ -49,7 +59,7 @@ public class CovenSummoningAmuletItem extends Item {
             case COVEN_MOTHER -> summonCovenMother(level, pos, player);
             case COVENLESS_WITCH -> {
                 if (binding.witchName().isPresent()) {
-                    summonCovenlessWitch(level, pos, binding.witchName().get());
+                    summonCovenlessWitch(level, pos, binding, context.getItemInHand(), player);
                 }
             }
         }
@@ -83,15 +93,35 @@ public class CovenSummoningAmuletItem extends Item {
         level.addFreshEntity(yaga);
     }
 
-    private void summonCovenlessWitch(Level level, BlockPos pos, String witchName) {
-        WitchIdentity identity = WitchIdentityPool.getByName(witchName);
+    private void summonCovenlessWitch(Level level, BlockPos pos, AmuletBinding binding, ItemStack amulet, @Nullable Player player) {
+        if (!(level instanceof ServerLevel serverLevel)) return;
+        String witchName = binding.witchName().get();
+
+        if (binding.soulId().isPresent() && FallenWitchesData.get(serverLevel.getServer()).isFallen(binding.soulId().get())) {
+            amulet.remove(ModDataComponents.AMULET_BINDING.get());
+            level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.PLAYERS, 1.0F, 0.5F);
+            if (player != null) {
+                player.displayClientMessage(Component.literal("The amulet goes cold. " + witchName + " will not answer again."), true);
+            }
+            return;
+        }
 
         CovenlessWitchEntity witch = ModEntities.COVENLESS_WITCH.get().create(level);
         if (witch == null) return;
 
-        witch.setIdentity(identity);
+        witch.setIdentity(WitchIdentityPool.getByName(witchName));
+
+        // Amulets from before souls existed: give her one now and write it into the amulet,
+        // so from here on this amulet always calls this same witch.
+        UUID soul = binding.soulId().orElseGet(UUID::randomUUID);
+        witch.setSoulId(soul);
+        if (binding.soulId().isEmpty()) {
+            amulet.set(ModDataComponents.AMULET_BINDING.get(),
+                    new AmuletBinding(binding.type(), binding.witchName(), Optional.of(soul)));
+        }
+
         witch.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-        witch.startDespawnCountdown(20 * 60); // 1 minute (2 ticks)
+        witch.startDespawnCountdown(20 * 60);
         level.addFreshEntity(witch);
     }
 

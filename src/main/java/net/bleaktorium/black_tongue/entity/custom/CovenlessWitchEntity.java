@@ -20,14 +20,17 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.bleaktorium.black_tongue.coven.FallenWitchesData;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -75,11 +78,24 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         return WitchIdentityPool.getByName(identityName);
     }
 
+    @Nullable
+    private UUID soulId = null;
+
+    public UUID getSoulId() {
+        if (soulId == null) soulId = UUID.randomUUID();
+        return soulId;
+    }
+
+    public void setSoulId(UUID soulId) {
+        this.soulId = soulId;
+    }
+
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         tag.putInt("DespawnTicks", despawnTicksRemaining);
         super.addAdditionalSaveData(tag);
         if (identityName != null) tag.putString("WitchIdentity", identityName);
+        if (soulId != null) tag.putUUID("SoulId", soulId);
     }
 
     @Override
@@ -87,11 +103,13 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         despawnTicksRemaining = tag.contains("DespawnTicks") ? tag.getInt("DespawnTicks") : -1;
         super.readAdditionalSaveData(tag);
         if (tag.contains("WitchIdentity")) identityName = tag.getString("WitchIdentity");
+        if (tag.hasUUID("SoulId")) soulId = tag.getUUID("SoulId");
     }
 
     @Override
     public void die(DamageSource source) {
         if (!this.level().isClientSide && !this.dead && this.level() instanceof ServerLevel serverLevel) {
+            FallenWitchesData.get(serverLevel.getServer()).markFallen(getSoulId());
             String name = getIdentity().name();
             List<Coven> leftCovens = CovenService.removeDeadWitch(serverLevel.getServer(), name);
 
@@ -135,7 +153,9 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         ItemStack held = player.getItemInHand(hand);
         if (held.getItem() instanceof CovenSummoningAmuletItem && held.get(ModDataComponents.AMULET_BINDING.get()) == null) {
             held.set(ModDataComponents.AMULET_BINDING.get(),
-                    new AmuletBinding(SummonedWitchType.COVENLESS_WITCH, Optional.of(getIdentity().name())));
+                    new AmuletBinding(SummonedWitchType.COVENLESS_WITCH,
+                            Optional.of(getIdentity().name()),
+                            Optional.of(getSoulId())));
             player.displayClientMessage(Component.literal("The amulet now answers to " + getIdentity().name() + "."), true);
             return InteractionResult.SUCCESS;
         }

@@ -171,7 +171,10 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             ItemStack stored = be.getStoredItem();
             AmuletBinding binding = stored.get(ModDataComponents.AMULET_BINDING.get());
             WitchIdentity witch = identityFor(binding);
-            ServerPlayer standing = stored.isEmpty() ? playerStandingOn(serverLevel, stonePos) : null;
+            if (binding != null && binding.soulId().isPresent()
+                    && FallenWitchesData.get(serverLevel.getServer()).isFallen(binding.soulId().get())) {
+                witch = null;
+            }            ServerPlayer standing = stored.isEmpty() ? playerStandingOn(serverLevel, stonePos) : null;
 
             seats.add(new SeatView(stonePos, offset, stoneState.getValue(MoonPhaseRuneBlock.PHASE),
                     stored, binding, witch, standing));
@@ -245,7 +248,6 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             }
         }
 
-        // tally power and stability under the chosen recipe
         int amp = RitualMath.PLAYER_BASE_AMPLIFICATION;
         double stabilitySum = RitualMath.PLAYER_BASE_STABILITY;
         int contributors = 1;

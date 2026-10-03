@@ -67,6 +67,7 @@ public class RitualGuests {
         CovenlessWitchEntity witch = ModEntities.COVENLESS_WITCH.get().create(level);
         if (witch == null) return null;
         witch.setIdentity(WitchIdentityPool.getByName(name));
+        binding.soulId().ifPresent(witch::setSoulId);
         witch.setPersistenceRequired();
         witch.startDespawnCountdown(safetyTicks);
         return witch;
