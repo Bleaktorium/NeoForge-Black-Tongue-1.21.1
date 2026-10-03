@@ -7,9 +7,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.Nullable;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 public class CovenSavedData extends SavedData {
 
@@ -54,9 +53,17 @@ public class CovenSavedData extends SavedData {
         return null;
     }
 
+    public List<Coven> findContainingWitch(String witchName) {
+        List<Coven> result = new ArrayList<>();
+        for (Coven coven : covensByFounder.values()) {
+            if (coven.isMember(CovenMember.Kind.WITCH, witchName)) result.add(coven);
+        }
+        return result;
+    }
+
     public void create(Coven coven) {
         covensByFounder.put(coven.founderId(), coven);
-        setDirty(); // without this the change never gets written
+        setDirty();
     }
 
     public boolean delete(UUID founderId) {

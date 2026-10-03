@@ -1,16 +1,18 @@
 package net.bleaktorium.black_tongue.entity.custom;
 
-import net.bleaktorium.black_tongue.coven.AmuletBinding;
-import net.bleaktorium.black_tongue.coven.ModDataComponents;
-import net.bleaktorium.black_tongue.coven.SummonedWitchType;
-import net.bleaktorium.black_tongue.coven.WitchTradeMenu;
+import net.bleaktorium.black_tongue.coven.*;
+import net.bleaktorium.black_tongue.item.ModItems;
 import net.bleaktorium.black_tongue.item.custom.CovenSummoningAmuletItem;
+import net.bleaktorium.black_tongue.remains.RemainsData;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -23,6 +25,8 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.List;
 import java.util.Optional;
 
 public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
@@ -83,6 +87,30 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         despawnTicksRemaining = tag.contains("DespawnTicks") ? tag.getInt("DespawnTicks") : -1;
         super.readAdditionalSaveData(tag);
         if (tag.contains("WitchIdentity")) identityName = tag.getString("WitchIdentity");
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        if (!this.level().isClientSide && !this.dead && this.level() instanceof ServerLevel serverLevel) {
+            String name = getIdentity().name();
+            List<Coven> leftCovens = CovenService.removeDeadWitch(serverLevel.getServer(), name);
+
+            if (!leftCovens.isEmpty()) {
+                ItemStack remains = new ItemStack(ModItems.WITCH_REMAINS.get());
+                remains.set(ModDataComponents.REMAINS_DATA.get(),
+                        RemainsData.collectedNow(RemainsData.Origin.WITCH, name, serverLevel));
+                this.spawnAtLocation(remains);
+
+                for (Coven coven : leftCovens) {
+                    ServerPlayer founder = serverLevel.getServer().getPlayerList().getPlayer(coven.founderId());
+                    if (founder != null) {
+                        founder.sendSystemMessage(Component.literal(name + " has died. Her seat in "
+                                + coven.name() + " stands empty.").withStyle(ChatFormatting.DARK_PURPLE));
+                    }
+                }
+            }
+        }
+        super.die(source);
     }
 
     @Override

@@ -3,6 +3,8 @@ package net.bleaktorium.black_tongue.coven;
 import net.bleaktorium.black_tongue.ritual.RitualParticipant;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +41,17 @@ public class CovenService {
                 CovenMember.from(motherP), CovenMember.from(founderP));
         data.create(coven);
         return new FormationResult(Status.CREATED, coven, candidatesFor(coven, participants));
+    }
+
+    public static List<Coven> removeDeadWitch(MinecraftServer server, String witchName) {
+        CovenSavedData data = CovenSavedData.get(server);
+        List<Coven> leftCovens = new ArrayList<>();
+        for (Coven coven : data.findContainingWitch(witchName)) {
+            if (data.removeMember(coven.founderId(), CovenMember.Kind.WITCH, witchName) == Coven.RemoveResult.REMOVED) {
+                leftCovens.add(coven);
+            }
+        }
+        return leftCovens;
     }
 
     private static List<RitualParticipant> candidatesFor(Coven coven, List<RitualParticipant> participants) {
