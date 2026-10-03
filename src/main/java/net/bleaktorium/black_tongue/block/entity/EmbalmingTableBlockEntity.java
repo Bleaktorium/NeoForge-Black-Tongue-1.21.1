@@ -159,10 +159,13 @@ public class EmbalmingTableBlockEntity extends BlockEntity implements GeoBlockEn
         triggerAnim("controller", "pour_oil");
     }
 
-    public void dripOil(Vector3d at) {
+    public void dripOil(Vector3d local) {
         if (level == null || level.getGameTime() == lastDripTick) return;
         lastDripTick = level.getGameTime();
-        level.addParticle(ParticleTypes.FALLING_HONEY, at.x, at.y, at.z, 0, 0, 0);
+        double x = worldPosition.getX() + local.x;
+        double y = worldPosition.getY() + local.y;
+        double z = worldPosition.getZ() + local.z;
+        level.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, 0, 0, 0);
     }
 
     private void finishPour(ServerLevel level) {

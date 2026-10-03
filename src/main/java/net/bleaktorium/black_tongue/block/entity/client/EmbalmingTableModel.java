@@ -54,7 +54,7 @@ public class EmbalmingTableModel extends GeoModel<EmbalmingTableBlockEntity> {
         if (pourPoint != null) {
             pourPoint.setTrackingMatrices(true);
             if (age >= EmbalmingTableBlockEntity.DRIP_START && age < EmbalmingTableBlockEntity.DRIP_END) {
-                table.dripOil(pourPoint.getWorldPosition());
+                table.dripOil(pourPoint.getLocalPosition());
             }
         }
 

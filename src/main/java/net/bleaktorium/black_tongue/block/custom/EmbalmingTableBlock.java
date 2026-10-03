@@ -2,14 +2,17 @@ package net.bleaktorium.black_tongue.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.bleaktorium.black_tongue.block.entity.EmbalmingTableBlockEntity;
+import net.bleaktorium.black_tongue.block.entity.client.CandleFlames;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.bleaktorium.black_tongue.item.custom.OilItem;
 import net.bleaktorium.black_tongue.item.custom.RemainsItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -133,6 +136,30 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    private static final double[][] WICKS = {
+            {13.15, 8.3, 9.4}, {-1.1, 8.3, 9.4}, {18.65, 8.3, -9.35}, {14.2, 9.3, 8.95},
+            {22.95, 14.3, 6.95}, {22.95, 14.3, -7.05}, {-7.05, 14.3, -7.05}, {-7.05, 14.3, 6.95},
+            {14.15, 7.3, 10.0}, {17.15, 7.3, -9.75}
+    };
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (state.getValue(PART) != TablePart.MAIN) return;
+        Direction facing = state.getValue(FACING);
+        Direction xDir = sideDirection(facing);
+        Direction zDir = facing.getOpposite();
+        for (double[] wick : WICKS) {
+            double x = pos.getX() + 0.5 + (xDir.getStepX() * wick[0] + zDir.getStepX() * wick[2]) / 16.0;
+            double y = pos.getY() + wick[1] / 16.0;
+            double z = pos.getZ() + 0.5 + (xDir.getStepZ() * wick[0] + zDir.getStepZ() * wick[2]) / 16.0;
+            if (random.nextFloat() < 0.02F) {
+                level.playLocalSound(x, y, z, SoundEvents.CANDLE_AMBIENT, SoundSource.BLOCKS,
+                        1.0F + random.nextFloat(), random.nextFloat() * 0.7F + 0.3F, false);
+            }
+            CandleFlames.smallFlame(x, y, z, 0.7F);
+        }
     }
 
     @Override
