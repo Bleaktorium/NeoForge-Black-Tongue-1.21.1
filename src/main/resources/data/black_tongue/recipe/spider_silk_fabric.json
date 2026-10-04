@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XX",
+    "XX"
+  ],
+  "key": {
+    "X": {
+      "item": "black_tongue:spider_silk_thread"
+    }
+  },
+  "result": {
+    "id": "black_tongue:spider_silk_fabric",
+    "count": 1
+  }
+}

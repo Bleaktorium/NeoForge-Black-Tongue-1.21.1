@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XOX",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "minecraft:wool"
+    },
+    "O": {
+      "item": "black_tongue:wool_thread"
+    }
+  },
+  "result": {
+    "id": "black_tongue:chestplate_lining",
+    "count": 1
+  }
+}

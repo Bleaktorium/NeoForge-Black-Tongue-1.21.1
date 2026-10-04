@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "black_tongue:item/banshees_wisp_thread"
+  }
+}

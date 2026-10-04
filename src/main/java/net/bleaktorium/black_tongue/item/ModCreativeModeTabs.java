@@ -53,6 +53,27 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.ANCESTOR_WRAP.get()); //item
                         output.accept(ModItems.DEVILS_COTTON_SEEDS.get()); //seed
                         output.accept(ModItems.SPIDER_SILK_SEEDS.get()); //seed
+                        output.accept(ModItems.BANSHEES_WISP.get()); //material
+                        output.accept(ModItems.SPIDER_SILK_THREAD.get()); //thread
+                        output.accept(ModItems.DEVILS_COTTON_THREAD.get()); //thread
+                        output.accept(ModItems.BANSHEES_WISP_THREAD.get()); //thread
+                        output.accept(ModItems.WOOL_THREAD.get()); //thread
+                        output.accept(ModItems.SPIDER_SILK_FABRIC.get()); //fabric
+                        output.accept(ModItems.DEVILS_COTTON_FABRIC.get()); //fabric
+                        output.accept(ModItems.BANSHEES_WISP_FABRIC.get()); //fabric
+                        output.accept(ModItems.SILK_FABRIC_ROLL.get()); //roll
+                        output.accept(ModItems.COTTON_FABRIC_ROLL.get()); //roll
+                        output.accept(ModItems.WISP_FABRIC_ROLL.get()); //roll
+                        output.accept(ModItems.HELMET_LINING.get()); //lining
+                        output.accept(ModItems.CHESTPLATE_LINING.get()); //lining
+                        output.accept(ModItems.LEGGINGS_LINING.get()); //lining
+                        output.accept(ModItems.BOOTS_LINING.get()); //lining
+                        output.accept(ModItems.SEED_OIL.get()); //material
+                        output.accept(ModItems.HAUNTING_GLASS.get()); //material
+                        output.accept(ModItems.INFUSED_LEATHER.get()); //infused
+                        output.accept(ModItems.INFUSED_IRON_INGOT.get()); //infused
+                        output.accept(ModItems.INFUSED_DIAMOND.get()); //infused
+                        output.accept(ModItems.GOLDEN_COMB.get()); //tool
 
                     })
                     .build());
