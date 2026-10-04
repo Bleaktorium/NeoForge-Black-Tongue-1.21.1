@@ -51,6 +51,9 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.SPIDER_OIL.get()); //item
                         output.accept(ModItems.DRYAD_OIL.get()); //item
                         output.accept(ModItems.ANCESTOR_WRAP.get()); //item
+                        output.accept(ModItems.DEVILS_COTTON_SEEDS.get()); //seed
+                        output.accept(ModItems.SPIDER_SILK_SEEDS.get()); //seed
+
                     })
                     .build());
 }

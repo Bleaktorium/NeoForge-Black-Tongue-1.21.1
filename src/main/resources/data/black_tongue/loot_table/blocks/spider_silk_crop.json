@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "black_tongue:spider_silk",
+      "conditions": [ { "condition": "minecraft:block_state_property", "block": "black_tongue:spider_silk_crop", "properties": { "age": "6" } } ] } ] },
+    { "rolls": 1, "entries": [ { "type": "minecraft:item", "name": "black_tongue:spider_silk_seeds" } ] }
+  ]
+}

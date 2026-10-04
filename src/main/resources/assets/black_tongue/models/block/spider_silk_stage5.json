@@ -1,0 +1,8 @@
+{
+  "parent": "black_tongue:block/tall_cross",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "bottom": "black_tongue:block/spider_silk_stage5_bottom",
+    "top": "black_tongue:block/spider_silk_stage5_top"
+  }
+}

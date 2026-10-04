@@ -7,6 +7,7 @@ import net.bleaktorium.black_tongue.remains.RemainsData;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemNameBlockItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -71,6 +72,12 @@ public class ModItems {
             ITEMS.registerSimpleBlockItem("devilsthorn_seeds", ModBlocks.DEVILSTHORN_CROP);
     public static final DeferredItem<BlockItem> PAGANKA_ROOT_SEEDS =
             ITEMS.registerSimpleBlockItem("paganka_root_seeds", ModBlocks.PAGANKA_ROOT);
+    public static final DeferredItem<ItemNameBlockItem> SPIDER_SILK_SEEDS =
+            ITEMS.registerItem("spider_silk_seeds.json",
+            props -> new ItemNameBlockItem(ModBlocks.SPIDER_SILK_CROP.get(), props));
+    public static final DeferredItem<ItemNameBlockItem> DEVILS_COTTON_SEEDS =
+            ITEMS.registerItem("devils_cotton_seeds",
+            props -> new ItemNameBlockItem(ModBlocks.DEVILS_COTTON_CROP.get(), props));
 
     // PLANTS
     public static final DeferredItem<Item> MOTHLEAF = ITEMS.registerSimpleItem("mothleaf", new Item.Properties());
@@ -81,6 +88,10 @@ public class ModItems {
     public static final DeferredItem<Item> DEVILSTHORN_DRIED2 = ITEMS.registerSimpleItem("devilsthorn_dried2", new Item.Properties());
 
     public static final DeferredItem<Item> PAGANKA_ROOT = ITEMS.registerSimpleItem("paganka_root", new Item.Properties());
+
+    public static final DeferredItem<Item> SPIDER_SILK = ITEMS.registerSimpleItem("spider_silk", new Item.Properties());
+
+    public static final DeferredItem<Item> DEVILS_COTTON = ITEMS.registerSimpleItem("devils_cotton", new Item.Properties());
 
     // GRINDED MATS
     public static final DeferredItem<Item> MOTHLEAF_DUST = ITEMS.registerSimpleItem("mothleaf_dust", new Item.Properties());

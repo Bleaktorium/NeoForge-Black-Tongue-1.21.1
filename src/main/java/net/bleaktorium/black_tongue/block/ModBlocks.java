@@ -64,4 +64,18 @@ public class ModBlocks {
     public static final DeferredBlock<EmbalmingTableBlock> EMBALMING_TABLE = BLOCKS.register("embalming_table",
             () -> new EmbalmingTableBlock(BlockBehaviour.Properties.of().strength(2.5f).noOcclusion()
                     .lightLevel(state -> 12)));
+
+    public static final DeferredBlock<SpiderGrassCropBlock> SPIDER_SILK_CROP = BLOCKS.register("spider_silk_crop",
+            () -> new SpiderGrassCropBlock(BlockBehaviour.Properties.of()
+                    .noCollission().randomTicks().instabreak()
+                    .sound(net.minecraft.world.level.block.SoundType.CROP)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY),
+                    ModItems.SPIDER_SILK_SEEDS));
+
+    public static final DeferredBlock<DevilsCottonCropBlock> DEVILS_COTTON_CROP = BLOCKS.register("devils_cotton_crop",
+            () -> new DevilsCottonCropBlock(BlockBehaviour.Properties.of()
+                    .noCollission().randomTicks().instabreak()
+                    .sound(net.minecraft.world.level.block.SoundType.CROP)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY),
+                    ModItems.DEVILS_COTTON_SEEDS));
 }

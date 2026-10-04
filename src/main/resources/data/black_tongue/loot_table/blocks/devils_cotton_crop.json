@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    { "rolls": 1,
+      "entries": [
+      { "type": "minecraft:item",
+        "name": "black_tongue:devils_cotton",
+        "conditions": [
+        { "condition": "minecraft:block_state_property",
+          "block": "black_tongue:devils_cotton_crop",
+          "properties": {
+            "age": "6"
+          }
+        }
+      ]}]
+    },
+    { "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item",
+          "name": "black_tongue:devils_cotton_seeds"
+        }
+      ]
+    }
+  ]
+}
