@@ -7,6 +7,9 @@ import net.bleaktorium.black_tongue.remains.RemainsData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -35,13 +38,20 @@ import java.util.UUID;
 public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    private String identityName = null;
+    private static final EntityDataAccessor<String> IDENTITY =
+            SynchedEntityData.defineId(CovenlessWitchEntity.class, EntityDataSerializers.STRING);
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IDENTITY, "");
+    }
 
     // debug
     private int despawnTicksRemaining = -1;
 
     public void setIdentity(WitchIdentity identity) {
-        this.identityName = identity.name();
+        this.entityData.set(IDENTITY, identity.name());
     }
 
     public void startDespawnCountdown(int ticks) {
@@ -51,6 +61,9 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide && this.entityData.get(IDENTITY).isEmpty()) {
+            getIdentity();
+        }
         if (!this.level().isClientSide && despawnTicksRemaining > 0) {
             despawnTicksRemaining--;
             if (despawnTicksRemaining == 0) {
@@ -70,12 +83,13 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
     }
 
     public WitchIdentity getIdentity() {
-        if (identityName == null) {
+        String name = this.entityData.get(IDENTITY);
+        if (name.isEmpty() && !this.level().isClientSide) {
             WitchIdentity rolled = WitchIdentityPool.rollRandom(this.getRandom());
-            identityName = rolled.name();
+            this.entityData.set(IDENTITY, rolled.name());
             return rolled;
         }
-        return WitchIdentityPool.getByName(identityName);
+        return WitchIdentityPool.getByName(name);
     }
 
     @Nullable
@@ -94,7 +108,8 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
     public void addAdditionalSaveData(CompoundTag tag) {
         tag.putInt("DespawnTicks", despawnTicksRemaining);
         super.addAdditionalSaveData(tag);
-        if (identityName != null) tag.putString("WitchIdentity", identityName);
+        String name = this.entityData.get(IDENTITY);
+        if (!name.isEmpty()) tag.putString("WitchIdentity", name);
         if (soulId != null) tag.putUUID("SoulId", soulId);
     }
 
@@ -102,7 +117,7 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
     public void readAdditionalSaveData(CompoundTag tag) {
         despawnTicksRemaining = tag.contains("DespawnTicks") ? tag.getInt("DespawnTicks") : -1;
         super.readAdditionalSaveData(tag);
-        if (tag.contains("WitchIdentity")) identityName = tag.getString("WitchIdentity");
+        if (tag.contains("WitchIdentity")) this.entityData.set(IDENTITY, tag.getString("WitchIdentity"));
         if (tag.hasUUID("SoulId")) soulId = tag.getUUID("SoulId");
     }
 

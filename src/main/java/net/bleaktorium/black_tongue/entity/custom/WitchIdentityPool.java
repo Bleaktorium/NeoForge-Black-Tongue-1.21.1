@@ -16,6 +16,20 @@ public class WitchIdentityPool {
                     ResourceLocation.fromNamespaceAndPath("black_tongue", "textures/entity/yennefer.png")
             ),
             new WitchIdentity(
+                    "Doedre",
+                    ResourceLocation.fromNamespaceAndPath("black_tongue", "textures/gui/trade/coven_trade_doedre.png"),
+                    ResourceLocation.fromNamespaceAndPath("black_tongue", "geo/covenless_witch.geo.json"),
+                    ResourceLocation.fromNamespaceAndPath("black_tongue", "textures/entity/doedre.png"),
+                    true, 20, 80
+            ),
+            new WitchIdentity(
+                    "Marina",
+                    ResourceLocation.fromNamespaceAndPath("black_tongue", "textures/gui/trade/coven_trade_marina.png"),
+                    ResourceLocation.fromNamespaceAndPath("black_tongue", "geo/covenless_witch.geo.json"),
+                    ResourceLocation.fromNamespaceAndPath("black_tongue", "textures/entity/marina.png"),
+                    true, 20, 80
+            ),
+            new WitchIdentity(
                     "Coven Mother Yaga",
                     ResourceLocation.fromNamespaceAndPath("black_tongue", "textures/gui/trade/coven_trade_yaga.png"),
                     ResourceLocation.fromNamespaceAndPath("black_tongue", "geo/coven_mother.geo.json"),

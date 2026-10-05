@@ -15,6 +15,18 @@ public class WitchTradePool {
                     WitchTradeOffer.of(25, new ItemStack(Items.EMERALD, 2), new ItemStack(Items.SPIDER_EYE, 2)),
                     WitchTradeOffer.amuletReward(50, new ItemStack(Items.EMERALD, 10))
             ),
+            "Doedre", List.of(
+                    WitchTradeOffer.of(0, new ItemStack(Items.EMERALD), new ItemStack(Items.BONE, 6)),
+                    WitchTradeOffer.of(10, new ItemStack(Items.EMERALD), new ItemStack(Items.GUNPOWDER, 3)),
+                    WitchTradeOffer.of(25, new ItemStack(Items.EMERALD, 2), new ItemStack(Items.FERMENTED_SPIDER_EYE)),
+                    WitchTradeOffer.amuletReward(50, new ItemStack(Items.EMERALD, 10))
+            ),
+            "Marina", List.of(
+                    WitchTradeOffer.of(0, new ItemStack(Items.EMERALD), new ItemStack(Items.KELP, 8)),
+                    WitchTradeOffer.of(10, new ItemStack(Items.EMERALD), new ItemStack(Items.INK_SAC, 3)),
+                    WitchTradeOffer.of(25, new ItemStack(Items.EMERALD, 2), new ItemStack(Items.PRISMARINE_SHARD, 4)),
+                    WitchTradeOffer.amuletReward(50, new ItemStack(Items.EMERALD, 10))
+            ),
             "Coven Mother Yaga", List.of(
                     WitchTradeOffer.of(0, new ItemStack(Items.EMERALD, 3), new ItemStack(Items.GLOWSTONE_DUST, 4))
             )
