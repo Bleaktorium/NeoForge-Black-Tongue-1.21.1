@@ -4,6 +4,7 @@ import net.bleaktorium.black_tongue.Black_Tongue;
 import net.bleaktorium.black_tongue.block.custom.*;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -82,4 +83,7 @@ public class ModBlocks {
     public static final DeferredBlock<SpinningWheelBlock> SPINNING_WHEEL = BLOCKS.register("spinning_wheel",
             () -> new SpinningWheelBlock(BlockBehaviour.Properties.of().strength(2.0f).noOcclusion()
                     .sound(net.minecraft.world.level.block.SoundType.WOOD)));
+
+    public static final DeferredBlock<WitchShelfBlock> WITCH_SHELF = BLOCKS.register("witch_shelf",
+            () -> new WitchShelfBlock(BlockBehaviour.Properties.of().strength(2.5f).noOcclusion().sound(SoundType.WOOD)));
 }

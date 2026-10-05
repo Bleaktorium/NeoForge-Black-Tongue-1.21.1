@@ -39,6 +39,7 @@ import net.bleaktorium.black_tongue.block.custom.DryingRackScreen;
 import net.bleaktorium.black_tongue.entity.client.PagankaRootRenderer;
 import net.bleaktorium.black_tongue.entity.client.HauntingSoulRenderer;
 import net.bleaktorium.black_tongue.entity.client.BansheeRenderer;
+import net.bleaktorium.black_tongue.block.custom.WitchShelfScreen;
 
 
 @Mod(Black_Tongue.MOD_ID)
@@ -118,6 +119,7 @@ public class Black_Tongue {
             event.registerBlockEntityRenderer(ModBlockEntities.SPINNING_WHEEL_BE.get(), context -> new SpinningWheelRenderer());
             event.registerEntityRenderer(ModEntities.HAUNTING_SOUL.get(), HauntingSoulRenderer::new);
             event.registerEntityRenderer(ModEntities.BANSHEE.get(), BansheeRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.WITCH_SHELF_BE.get(), context -> new WitchShelfRenderer());
         }
 
         @SubscribeEvent
@@ -125,6 +127,7 @@ public class Black_Tongue {
             event.register(ModMenuTypes.JOURNAL_TRADE.get(), JournalTradeScreen::new);
             event.register(ModMenuTypes.WITCH_TRADE.get(), WitchTradeScreen::new);
             event.register(ModMenuTypes.DRYING_RACK.get(), DryingRackScreen::new);
+            event.register(ModMenuTypes.WITCH_SHELF.get(), WitchShelfScreen::new);
         }
     }
 }

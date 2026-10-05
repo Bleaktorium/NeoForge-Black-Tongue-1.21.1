@@ -53,4 +53,8 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("spinning_wheel_be",
                     () -> BlockEntityType.Builder.of(SpinningWheelBlockEntity::new, ModBlocks.SPINNING_WHEEL.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WitchShelfBlockEntity>> WITCH_SHELF_BE =
+            BLOCK_ENTITIES.register("witch_shelf_be",
+                    () -> BlockEntityType.Builder.of(WitchShelfBlockEntity::new, ModBlocks.WITCH_SHELF.get()).build(null));
+
 }

@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue.item.menu;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
 import net.bleaktorium.black_tongue.block.custom.DryingRackMenu;
+import net.bleaktorium.black_tongue.block.custom.WitchShelfMenu;
 import net.bleaktorium.black_tongue.block.entity.DryingRackBlockEntity;
 import net.bleaktorium.black_tongue.coven.JournalTradeMenu;
 import net.bleaktorium.black_tongue.coven.WitchTradeMenu;
@@ -26,4 +27,7 @@ public class ModMenuTypes {
             MENU_TYPES.register("drying_rack", () -> IMenuTypeExtension.create(
                     (containerId, inv, buf) -> new DryingRackMenu(containerId, inv,
                             (DryingRackBlockEntity) inv.player.level().getBlockEntity(buf.readBlockPos()))));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<WitchShelfMenu>> WITCH_SHELF =
+            MENU_TYPES.register("witch_shelf", () -> new MenuType<>(WitchShelfMenu::new, FeatureFlags.DEFAULT_FLAGS));
 }

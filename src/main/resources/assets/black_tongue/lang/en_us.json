@@ -64,6 +64,11 @@
   "item.black_tongue.haunting_soul_spawn_egg": "Haunting Soul Spawn Egg",
   "entity.black_tongue.banshee": "Banshee",
   "item.black_tongue.banshee_spawn_egg": "Banshee Spawn Egg",
+  "block.black_tongue.witch_shelf": "Witch Shelf",
+  "gui.black_tongue.witch_shelf.tab.all": "All",
+  "gui.black_tongue.witch_shelf.tab.reagents": "Reagents",
+  "gui.black_tongue.witch_shelf.tab.consumables": "Consumables",
+  "gui.black_tongue.witch_shelf.tab.equipment": "Equipment",
 
 
 

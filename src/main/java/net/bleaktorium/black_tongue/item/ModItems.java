@@ -163,4 +163,8 @@ public class ModItems {
     public static final DeferredItem<DeferredSpawnEggItem> BANSHEE_SPAWN_EGG = ITEMS.registerItem("banshee_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntities.BANSHEE, 0xD9DEE3, 0x5E7FA3, props));
 
+    // STORAGE
+    public static final DeferredItem<BlockItem> WITCH_SHELF = ITEMS.registerSimpleBlockItem(
+            "witch_shelf", ModBlocks.WITCH_SHELF);
+
 }

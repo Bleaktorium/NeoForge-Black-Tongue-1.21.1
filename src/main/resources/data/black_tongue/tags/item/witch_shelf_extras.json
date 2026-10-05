@@ -1,0 +1,21 @@
+{
+  "values": [
+    "minecraft:spider_eye",
+    "minecraft:fermented_spider_eye",
+    "minecraft:bone",
+    "minecraft:bone_meal",
+    "minecraft:glowstone_dust",
+    "minecraft:redstone",
+    "minecraft:gunpowder",
+    "minecraft:sugar",
+    "minecraft:rotten_flesh",
+    "minecraft:feather",
+    "minecraft:string",
+    "minecraft:leather",
+    "minecraft:wheat_seeds",
+    "minecraft:glass_bottle",
+    "minecraft:potion",
+    "minecraft:splash_potion",
+    "minecraft:lingering_potion"
+  ]
+}

@@ -80,6 +80,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.COVEN_HUT_SPAWN_EGG.get()); //mob
                         output.accept(ModItems.COVEN_MOTHER_SPAWN_EGG.get()); //mob
                         output.accept(ModItems.BANSHEE_SPAWN_EGG.get()); //mob
+                        output.accept(ModItems.WITCH_SHELF.get()); //station
 
                     })
                     .build());
