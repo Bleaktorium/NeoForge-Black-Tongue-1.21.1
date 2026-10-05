@@ -1,0 +1,17 @@
+{
+  "name": "Iron Infusion",
+  "category": "black_tongue:rituals",
+  "icon": "black_tongue:infused_iron",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Plain stones bear only their carving. Stones of $(l)two borders$() are holding runes; lay upon them what the sign demands: $(l)♂$() iron, the $(l)drop$() is oil.$(br2)Stand where the waning moon is marked. The Mother takes the waxing; our sisters, the dark moons below."
+    },
+    {
+      "type": "patchouli:image",
+      "images": ["black_tongue:textures/gui/patchouli/ritual_infused_iron.png"],
+      "title": "",
+      "border": false
+    }
+  ]
+}

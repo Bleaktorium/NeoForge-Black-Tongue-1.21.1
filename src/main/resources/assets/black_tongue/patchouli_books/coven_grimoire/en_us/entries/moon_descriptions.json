@@ -1,0 +1,17 @@
+{
+  "name": "Phases of the Moon",
+  "category": "black_tongue:ancient_studies",
+  "icon": "black_tongue:moon_phase_stone",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "I. Full Moon$(br)II. Waning Gibbous$(br)III. Last Quarter$(br)IV. Waning Crescent$(br)V. New Moon$(br)VI. Waxing Crescent$(br)VII. First Quarter$(br)VIII. Waxing Gibbous"
+    },
+    {
+      "type": "patchouli:image",
+      "images": ["black_tongue:textures/gui/patchouli/moon_chart.png"],
+      "title": "",
+      "border": false
+    }
+  ]
+}
