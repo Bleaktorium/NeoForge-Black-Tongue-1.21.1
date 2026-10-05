@@ -35,6 +35,10 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import java.util.EnumSet;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
@@ -59,10 +63,57 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MoveTowardsRestrictionGoal(this, 0.6));
-        this.goalSelector.addGoal(2, new WanderGoal(this, 0.6));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new CastSpellGoal(this));
+        this.goalSelector.addGoal(2, new MoveTowardsRestrictionGoal(this, 0.6));
+        this.goalSelector.addGoal(3, new WanderGoal(this, 0.6));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, CovenlessWitchEntity.class));
+    }
+
+    private static class CastSpellGoal extends Goal {
+        private final CovenlessWitchEntity witch;
+        private int cooldown = 20;
+
+        CastSpellGoal(CovenlessWitchEntity witch) {
+            this.witch = witch;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = witch.getTarget();
+            return target != null && target.isAlive();
+        }
+
+        @Override
+        public void stop() {
+            witch.getNavigation().stop();
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = witch.getTarget();
+            if (target == null) return;
+            WitchSpell spell = WitchSpell.of(witch.getIdentity().name());
+
+            witch.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            boolean inRange = witch.distanceTo(target) <= spell.range() && witch.getSensing().hasLineOfSight(target);
+            if (inRange) witch.getNavigation().stop();
+            else witch.getNavigation().moveTo(target, 0.7);
+
+            if (cooldown > 0) {
+                cooldown--;
+            } else if (inRange) {
+                spell.cast(witch, target);
+                cooldown = spell.cooldown();
+            }
+        }
     }
 
     private static class WanderGoal extends WaterAvoidingRandomStrollGoal {
@@ -188,14 +239,16 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+        controllers.add(new AnimationController<>(this, "controller", 2, this::predicate));
     }
+
+    private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation WALK = RawAnimation.begin().thenLoop("walking");
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> state) {
-        state.getController().setAnimation(RawAnimation.begin().then("idle", Animation.LoopType.LOOP));
+        state.getController().setAnimation(state.isMoving() ? WALK : IDLE);
         return PlayState.CONTINUE;
     }
-
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
