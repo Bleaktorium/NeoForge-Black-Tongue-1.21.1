@@ -1,5 +1,6 @@
 package net.bleaktorium.black_tongue.cauldron;
 
+import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import java.util.HashMap;
@@ -19,13 +20,20 @@ public class CauldronIngredients {
 
     // ice=-2, cold=-1, lukewarm=0, warm=1, hot=2
     public static void bootstrap() {
+
+        // temperature
         register(Items.WATER_BUCKET, 0, IngredientState.LIQUID);   // lukewarm, neutral
         register(Items.NETHER_WART, 2, IngredientState.SOLID);      // hot
         register(Items.COAL, 1, IngredientState.SOLID);             // warm
+        register(Items.SNOWBALL, -1, IngredientState.SOLID);        // cold
         register(Items.LAPIS_LAZULI, -2, IngredientState.SOLID);    // ice
-        register(Items.SUGAR, 0, IngredientState.SOLID);            // neutral — a recipe ingredient, not a temperature-mover
+
+        //ingredients (neutral)
+        register(Items.SUGAR, 0, IngredientState.SOLID);
         register(Items.COCOA_BEANS, 0, IngredientState.SOLID);
         register(Items.HONEY_BOTTLE, 0, IngredientState.LIQUID);
         register(Items.MILK_BUCKET, 0, IngredientState.LIQUID);
+        register(Items.LEATHER, 0, IngredientState.SOLID);
+        register(ModItems.SEED_OIL.get(), 0, IngredientState.LIQUID);
     }
 }

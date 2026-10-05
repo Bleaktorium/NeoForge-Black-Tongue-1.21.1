@@ -13,6 +13,11 @@ import java.util.Optional;
 public class CauldronEffects {
 
     public static void applyBrewOutcome(RitualMath.RitualOutcome outcome, Player player, CauldronRecipe recipe) {
+        if (recipe.makesItem()) {
+            giveItemOutcome(outcome, player, recipe);
+            return;
+        }
+
         double qualityFraction = switch (outcome) {
             case CRITICAL_FAILURE, FAILURE_WITH_SIDE_EFFECT -> 0.0;
             case PARTIAL_SUCCESS_WITH_SIDE_EFFECT -> 0.5;
@@ -37,6 +42,21 @@ public class CauldronEffects {
 
         if (!player.getInventory().add(potion)) {
             player.drop(potion, false);
+        }
+    }
+
+    private static void giveItemOutcome(RitualMath.RitualOutcome outcome, Player player, CauldronRecipe recipe) {
+        int multiplier = switch (outcome) {
+            case CRITICAL_FAILURE, FAILURE_WITH_SIDE_EFFECT -> 0;
+            case PARTIAL_SUCCESS_WITH_SIDE_EFFECT, SUCCESS -> 1;
+            case CRITICAL_SUCCESS -> 2;
+        };
+        if (multiplier == 0) return;
+
+        ItemStack result = recipe.resultItem().copy();
+        result.setCount(result.getCount() * multiplier);
+        if (!player.getInventory().add(result)) {
+            player.drop(result, false);
         }
     }
 }

@@ -1,7 +1,9 @@
 package net.bleaktorium.black_tongue.cauldron;
 
+import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
@@ -20,6 +22,14 @@ public class CauldronRecipes {
                 MobEffects.REGENERATION,
                 60 * 20,
                 1
+        ));
+        // Hot base (2) + 1 leather + 1 seed oil -> Infused Leather, 2 waves
+        RECIPES.add(CauldronRecipe.item(
+                2,
+                Map.of(Items.LEATHER, 1),
+                Map.of(ModItems.SEED_OIL.get(), 1),
+                4,
+                new ItemStack(ModItems.INFUSED_LEATHER.get())
         ));
     }
 

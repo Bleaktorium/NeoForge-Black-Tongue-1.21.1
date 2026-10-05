@@ -3,6 +3,7 @@ package net.bleaktorium.black_tongue.farming;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,5 +26,6 @@ public class HerbGrindingRecipes {
 
     public static void bootstrap() {
         register(ModItems.MOTHLEAF.get(), new ItemStack(ModItems.MOTHLEAF_DUST.get()));
+        register(Items.WHEAT_SEEDS, new ItemStack(ModItems.SEED_OIL.get()));
     }
 }
