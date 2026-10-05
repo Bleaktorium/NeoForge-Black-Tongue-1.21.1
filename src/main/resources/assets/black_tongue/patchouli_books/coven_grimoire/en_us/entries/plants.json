@@ -1,0 +1,17 @@
+{
+  "name": "Plants",
+  "category": "black_tongue:garden",
+  "icon": "black_tongue:devils_cotton",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Spider Grass $(br)  Pick the spider grass only once the weavers have done their work.$(br2)Devil's Cotton $(br)  Grows only where the damned are buried. Mind the thorns$(br)    ...mind the sand."
+    },
+    {
+      "type": "patchouli:image",
+      "images": ["black_tongue:textures/gui/patchouli/herbs_plate.png"],
+      "title": "",
+      "border": false
+    }
+  ]
+}

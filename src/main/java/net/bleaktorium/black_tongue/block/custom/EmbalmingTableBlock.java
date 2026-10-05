@@ -116,9 +116,13 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock())
-                && level.getBlockEntity(pos) instanceof EmbalmingTableBlockEntity table && !table.isEmpty()) {
-            Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, table.getRemains());
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof EmbalmingTableBlockEntity table) {
+            if (!table.isEmpty()) {
+                Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, table.getRemains());
+            }
+            for (ItemStack part : table.armorParts()) {
+                Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, part);
+            }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
@@ -188,10 +192,19 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
         }
 
         // 3. Remains
-        if (stack.getItem() instanceof RemainsItem && table.isEmpty()) {
+        if (stack.getItem() instanceof RemainsItem && table.isEmpty() && !table.hasArmorWork()) {
             if (!level.isClientSide) {
                 table.placeRemains(stack.split(1));
                 level.playSound(null, pos, SoundEvents.BONE_BLOCK_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+
+        // 4. Armor crafting: roll, then lining, then materials one by one
+        if (table.canAcceptArmorPart(stack)) {
+            if (level instanceof ServerLevel serverLevel) {
+                table.addArmorPart(serverLevel, stack.copyWithCount(1));
+                stack.consume(1, player);
             }
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -201,12 +214,22 @@ public class EmbalmingTableBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table
-                && !table.isEmpty() && !table.isPouring()) {
+        if (!(level.getBlockEntity(mainPos(state, pos)) instanceof EmbalmingTableBlockEntity table)) {
+            return InteractionResult.PASS;
+        }
+        if (!table.isEmpty() && !table.isPouring()) {
             if (!level.isClientSide) {
                 ItemStack taken = table.takeRemains();
                 if (!player.addItem(taken)) player.drop(taken, false);
                 level.playSound(null, pos, SoundEvents.BONE_BLOCK_BREAK, SoundSource.BLOCKS, 1.0F, 0.8F);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (table.hasArmorWork()) {
+            if (!level.isClientSide) {
+                ItemStack taken = table.takeBackArmorPart();
+                if (!player.addItem(taken)) player.drop(taken, false);
+                level.playSound(null, pos, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

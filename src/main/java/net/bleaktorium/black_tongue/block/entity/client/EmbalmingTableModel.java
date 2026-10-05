@@ -58,7 +58,22 @@ public class EmbalmingTableModel extends GeoModel<EmbalmingTableBlockEntity> {
             }
         }
 
-        show("armor_crafting", false); // the armor half of the station
+        // The armor half of the station
+        EmbalmingTableBlockEntity.ArmorFabric fabric = table.armorFabric();
+        EmbalmingTableBlockEntity.ArmorPiece piece = table.armorPiece();
+        show("armor_crafting", fabric != null);
+        show("cloth", fabric != null);
+        show("piece", piece != null);
+        for (EmbalmingTableBlockEntity.ArmorPiece p : EmbalmingTableBlockEntity.ArmorPiece.values()) {
+            show(p.bone, p == piece);
+        }
+        show("material", fabric != null);
+        for (EmbalmingTableBlockEntity.ArmorFabric f : EmbalmingTableBlockEntity.ArmorFabric.values()) {
+            show(f.materialGroup, f == fabric);
+            for (int i = 0; i < f.materialBones.length; i++) {
+                show(f.materialBones[i], f == fabric && i < table.armorMaterials());
+            }
+        }
     }
 
     private void show(String boneName, boolean visible) {
