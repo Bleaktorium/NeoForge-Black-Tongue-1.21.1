@@ -29,6 +29,12 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
@@ -47,8 +53,37 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         builder.define(IDENTITY, "");
     }
 
-    // debug
-    private int despawnTicksRemaining = -1;
+    private int despawnTicksRemaining = -1; //debug
+    private static final int HOME_RADIUS = 10;
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new MoveTowardsRestrictionGoal(this, 0.6));
+        this.goalSelector.addGoal(2, new WanderGoal(this, 0.6));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+    }
+
+    private static class WanderGoal extends WaterAvoidingRandomStrollGoal {
+        private final CovenlessWitchEntity witch;
+
+        WanderGoal(CovenlessWitchEntity witch, double speed) {
+            super(witch, speed);
+            this.witch = witch;
+        }
+
+        @Override
+        public boolean canUse() {
+            return witch.despawnTicksRemaining < 0 && super.canUse();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return witch.despawnTicksRemaining < 0 && super.canContinueToUse();
+        }
+    }
+
 
     public void setIdentity(WitchIdentity identity) {
         this.entityData.set(IDENTITY, identity.name());
@@ -63,6 +98,9 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         super.tick();
         if (!this.level().isClientSide && this.entityData.get(IDENTITY).isEmpty()) {
             getIdentity();
+        }
+        if (!this.level().isClientSide && !this.hasRestriction() && despawnTicksRemaining < 0) {
+            this.restrictTo(this.blockPosition(), HOME_RADIUS);
         }
         if (!this.level().isClientSide && despawnTicksRemaining > 0) {
             despawnTicksRemaining--;
@@ -111,6 +149,7 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         String name = this.entityData.get(IDENTITY);
         if (!name.isEmpty()) tag.putString("WitchIdentity", name);
         if (soulId != null) tag.putUUID("SoulId", soulId);
+        if (this.hasRestriction()) tag.putLong("Home", this.getRestrictCenter().asLong());
     }
 
     @Override
@@ -119,6 +158,7 @@ public class CovenlessWitchEntity extends PathfinderMob implements GeoEntity {
         super.readAdditionalSaveData(tag);
         if (tag.contains("WitchIdentity")) this.entityData.set(IDENTITY, tag.getString("WitchIdentity"));
         if (tag.hasUUID("SoulId")) soulId = tag.getUUID("SoulId");
+        if (tag.contains("Home")) this.restrictTo(BlockPos.of(tag.getLong("Home")), HOME_RADIUS);
     }
 
     @Override
