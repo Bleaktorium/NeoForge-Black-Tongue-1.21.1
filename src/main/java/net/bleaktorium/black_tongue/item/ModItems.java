@@ -160,5 +160,7 @@ public class ModItems {
             props -> new DeferredSpawnEggItem(ModEntities.COVEN_HUT, 0x5C4030, 0x6B7F3A, props));
     public static final DeferredItem<DeferredSpawnEggItem> COVEN_MOTHER_SPAWN_EGG = ITEMS.registerItem("coven_mother_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntities.COVEN_MOTHER, 0x1E1A1A, 0xD8CFB8, props));
+    public static final DeferredItem<DeferredSpawnEggItem> BANSHEE_SPAWN_EGG = ITEMS.registerItem("banshee_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntities.BANSHEE, 0xD9DEE3, 0x5E7FA3, props));
 
 }

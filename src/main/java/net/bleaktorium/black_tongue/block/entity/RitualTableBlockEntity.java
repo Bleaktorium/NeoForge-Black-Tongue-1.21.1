@@ -23,6 +23,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,11 +35,8 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+
+import java.util.*;
 
 public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntity {
 
@@ -70,6 +68,7 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
 
     private record SeatView(BlockPos pos, BlockPos offset, MoonPhase phase, ItemStack stored,
                             AmuletBinding binding, WitchIdentity witch, ServerPlayer standing) { }
+    private record Circle(List<SeatView> seats, Map<BlockPos, ItemStack> nests, @Nullable Coven coven) { }
 
     private record WitchSeat(BlockPos pos, AmuletBinding binding) { }
 
@@ -187,6 +186,22 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         return seats;
     }
 
+    private Circle readCircle(ServerLevel serverLevel, ServerPlayer initiator) {
+        Map<BlockPos, ItemStack> nests = new HashMap<>();
+        for (BlockPos offset : RitualTableBlock.RING_OFFSETS) {
+            BlockPos stonePos = worldPosition.offset(offset);
+            BlockState stoneState = serverLevel.getBlockState(stonePos);
+            if (stoneState.getBlock() instanceof RunicStoneBlock
+                    && stoneState.getValue(RunicStoneBlock.RUNE) == RuneType.NESTING
+                    && serverLevel.getBlockEntity(stonePos) instanceof RunicStoneBlockEntity be
+                    && !be.getStoredItem().isEmpty()) {
+                nests.put(offset, be.getStoredItem());
+            }
+        }
+        Coven coven = CovenSavedData.get(serverLevel.getServer()).findContaining(initiator.getUUID());
+        return new Circle(readSeats(serverLevel), nests, coven);
+    }
+
     private static SeatView seatAt(List<SeatView> seats, BlockPos offset) {
         for (SeatView s : seats) {
             if (s.offset().equals(offset)) return s;
@@ -194,37 +209,65 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         return null;
     }
 
-    private static boolean seatMeets(RitualRecipe.Seat req, SeatView seat, ServerPlayer initiator) {
+    private static boolean seatMeets(RitualRecipe.Seat req, SeatView seat, ServerPlayer initiator, @Nullable Coven coven) {
         if (seat.phase() != req.phase()) return false;
         return switch (req.role()) {
             case COVEN_MOTHER -> seat.witch() != null && seat.witch().covenMotherTier();
             case INITIATOR -> seat.standing() != null && seat.standing().getUUID().equals(initiator.getUUID());
+            case COVEN_MEMBER -> isCovenMember(seat, initiator, coven);
         };
     }
 
-    private static List<String> missingFor(RitualRecipe recipe, List<SeatView> seats, ServerPlayer initiator) {
+    private static boolean isCovenMember(SeatView seat, ServerPlayer initiator, @Nullable Coven coven) {
+        if (coven == null) return false;
+        if (seat.witch() != null) {
+            return !seat.witch().covenMotherTier()
+                    && coven.isMember(CovenMember.Kind.WITCH, witchKey(seat.binding(), seat.witch()));
+        }
+        ServerPlayer p = seat.standing();
+        return p != null && !p.getUUID().equals(initiator.getUUID())
+                && coven.isMember(CovenMember.Kind.PLAYER, p.getUUID().toString());
+    }
+
+    private static List<String> missingFor(RitualRecipe recipe, Circle circle, ServerPlayer initiator) {
         List<String> missing = new ArrayList<>();
         for (RitualRecipe.Seat req : recipe.requiredSeats()) {
-            SeatView seat = seatAt(seats, req.offset());
-            if (seat == null || !seatMeets(req, seat, initiator)) missing.add(req.describe());
+            SeatView seat = seatAt(circle.seats(), req.offset());
+            if (seat == null || !seatMeets(req, seat, initiator, circle.coven())) missing.add(req.describe());
+        }
+        for (Map.Entry<BlockPos, ItemLike> need : recipe.requiredItems().entrySet()) {
+            ItemStack held = circle.nests().getOrDefault(need.getKey(), ItemStack.EMPTY);
+            if (!held.is(need.getValue().asItem())) missing.add(RitualRecipe.describeItem(need.getKey(), need.getValue()));
         }
         return missing;
     }
 
-    private static RitualRecipe chooseRecipe(List<SeatView> seats, ServerPlayer initiator) {
+    private static RitualRecipe chooseRecipe(Circle circle, ServerPlayer initiator) {
         for (RitualRecipe recipe : RitualRecipe.ALL) {
-            if (missingFor(recipe, seats, initiator).isEmpty()) return recipe;
+            if (missingFor(recipe, circle, initiator).isEmpty()) return recipe;
         }
         return RitualRecipe.OFFERING_GIFT;
     }
 
-    private static String hintFor(List<SeatView> seats, ServerPlayer initiator) {
+    private static String hintFor(Circle circle, ServerPlayer initiator) {
         if (!SHOW_RITUAL_MATH) return "";
-        boolean looksLikeAttempt = seats.stream().anyMatch(s ->
-                (s.witch() != null && s.witch().covenMotherTier()) || s.standing() != null);
-        if (!looksLikeAttempt) return "";
-        List<String> missing = missingFor(RitualRecipe.COVEN_FORMATION, seats, initiator);
-        return missing.isEmpty() ? "" : "Coven Formation still needs " + String.join(" and ", missing) + ".";
+        RitualRecipe closest = null;
+        List<String> closestMissing = List.of();
+        for (RitualRecipe recipe : RitualRecipe.ALL) {
+            if (recipe.kind() == RitualRecipe.Kind.OFFERING_GIFT) continue;
+            List<String> missing = missingFor(recipe, circle, initiator);
+            if (missing.isEmpty()) return "";
+            int total = recipe.requiredSeats().size() + recipe.requiredItems().size();
+            if (missing.size() == total) continue;
+            if (closest == null || missing.size() < closestMissing.size()) {
+                closest = recipe;
+                closestMissing = missing;
+            }
+        }
+        if (closest == null) return "";
+        List<String> shown = closestMissing.size() > 4 ? closestMissing.subList(0, 4) : closestMissing;
+        String more = closestMissing.size() > 4 ? " and " + (closestMissing.size() - 4) + " more" : "";
+        return closest.name() + " still needs " + String.join(", ", shown) + more + ".";
     }
 
     // INITIATION
@@ -242,8 +285,9 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
             return;
         }
 
-        List<SeatView> seats = readSeats(serverLevel);
-        RitualRecipe recipe = chooseRecipe(seats, player);
+        Circle circle = readCircle(serverLevel, player);
+        List<SeatView> seats = circle.seats();
+        RitualRecipe recipe = chooseRecipe(circle, player);
 
         if (recipe.kind() == RitualRecipe.Kind.COVEN_FORMATION) {
             Coven other = CovenSavedData.get(serverLevel.getServer()).findContaining(player.getUUID());
@@ -296,14 +340,17 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
 
             switch (stoneState.getValue(RunicStoneBlock.RUNE)) {
                 case NESTING -> {
-                    if (recipe.usesOfferings()
-                            && level.getBlockEntity(stonePos) instanceof RunicStoneBlockEntity nestBe
-                            && RitualIngredients.isValidOffering(nestBe.getStoredItem())) {
-                        amp += RitualMath.NESTING_FILLED_AMPLIFICATION;
-                        stabilitySum += RitualMath.NESTING_STABILITY;
-                        contributors++;
-                        offerings++;
-                        snapshot.add(new Watched(stonePos, stoneState, nestBe.getStoredItem().copy(), true));
+                    if (level.getBlockEntity(stonePos) instanceof RunicStoneBlockEntity nestBe) {
+                        ItemStack held = nestBe.getStoredItem();
+                        boolean counts = recipe.needsAt(offset, held)
+                                || (recipe.usesOfferings() && RitualIngredients.isValidOffering(held));
+                        if (counts) {
+                            amp += RitualMath.NESTING_FILLED_AMPLIFICATION;
+                            stabilitySum += RitualMath.NESTING_STABILITY;
+                            contributors++;
+                            offerings++;
+                            snapshot.add(new Watched(stonePos, stoneState, held.copy(), true));
+                        }
                     }
                 }
                 case POTENCY -> {
@@ -340,14 +387,14 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
 
         if (offerings < recipe.minOfferings()) {
             player.displayClientMessage(Component.literal("The ritual needs an offering."), true);
-            String hint = hintFor(seats, player);
+            String hint = hintFor(circle, player);
             if (!hint.isEmpty()) player.sendSystemMessage(Component.literal(hint));
             return;
         }
         if (amp < recipe.requiredAmplification()) {
             player.displayClientMessage(Component.literal(
                     "Not enough power (" + amp + "/" + recipe.requiredAmplification() + ")."), true);
-            String hint = hintFor(seats, player);
+            String hint = hintFor(circle, player);
             if (!hint.isEmpty()) player.sendSystemMessage(Component.literal(hint));
             return;
         }
@@ -483,10 +530,11 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         ServerPlayer initiator = initiatorId == null ? null
                 : serverLevel.getServer().getPlayerList().getPlayer(initiatorId);
 
-        if (activeRecipe != null && activeRecipe.kind() == RitualRecipe.Kind.COVEN_FORMATION) {
-            resolveFormation(serverLevel, outcome, initiator);
-        } else {
-            resolveOfferingGift(serverLevel, outcome, initiator);
+        RitualRecipe.Kind kind = activeRecipe == null ? RitualRecipe.Kind.OFFERING_GIFT : activeRecipe.kind();
+        switch (kind) {
+            case COVEN_FORMATION -> resolveFormation(serverLevel, outcome, initiator);
+            case INFUSION -> resolveInfusion(serverLevel, outcome, initiator);
+            case OFFERING_GIFT -> resolveOfferingGift(serverLevel, outcome, initiator);
         }
 
         switch (outcome) {
@@ -511,7 +559,7 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
         reset();
     }
 
-    private void resolveOfferingGift(ServerLevel serverLevel, RitualMath.RitualOutcome outcome, @Nullable ServerPlayer initiator) {
+    private List<RunicStoneBlockEntity> consumableOfferings(ServerLevel serverLevel) {
         // Only offerings still sitting where we left them get consumed.
         List<RunicStoneBlockEntity> consumable = new ArrayList<>();
         for (Watched w : watched) {
@@ -521,9 +569,20 @@ public class RitualTableBlockEntity extends BlockEntity implements GeoBlockEntit
                 consumable.add(stoneBe);
             }
         }
+        return consumable;
+    }
 
+    private void resolveOfferingGift(ServerLevel serverLevel, RitualMath.RitualOutcome outcome, @Nullable ServerPlayer initiator) {
         ItemStack rewardTemplate = new ItemStack(ModItems.OFFERING_GIFT.get());
-        RitualEffects.applyConsumableOutcome(outcome, initiator, consumable, rewardTemplate, 1, serverLevel, worldPosition);
+        RitualEffects.applyConsumableOutcome(outcome, initiator, consumableOfferings(serverLevel),
+                rewardTemplate, 1, serverLevel, worldPosition);
+    }
+
+    private void resolveInfusion(ServerLevel serverLevel, RitualMath.RitualOutcome outcome, @Nullable ServerPlayer initiator) {
+        if (activeRecipe == null || activeRecipe.result() == null) return;
+        ItemStack rewardTemplate = new ItemStack(activeRecipe.result(), activeRecipe.resultCount());
+        RitualEffects.applyConsumableOutcome(outcome, initiator, consumableOfferings(serverLevel),
+                rewardTemplate, 1, serverLevel, worldPosition);
     }
 
     private void resolveFormation(ServerLevel serverLevel, RitualMath.RitualOutcome outcome, @Nullable ServerPlayer initiator) {

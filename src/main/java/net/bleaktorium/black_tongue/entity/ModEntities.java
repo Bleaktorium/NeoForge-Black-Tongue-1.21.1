@@ -41,4 +41,9 @@ public class ModEntities {
             ENTITY_TYPES.register("haunting_soul", () -> EntityType.Builder.of(HauntingSoulEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.3f) // covers the floating head
                     .build("haunting_soul"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BansheeEntity>> BANSHEE =
+            ENTITY_TYPES.register("banshee", () -> EntityType.Builder.of(BansheeEntity::new, MobCategory.CREATURE)
+                    .sized(0.6f, 1.9f)
+                    .build("banshee"));
 }

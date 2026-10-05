@@ -3,6 +3,9 @@ package net.bleaktorium.black_tongue.entity.custom;
 import net.bleaktorium.black_tongue.item.ModItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -33,7 +36,14 @@ public class BansheeEntity extends PathfinderMob implements GeoEntity {
     public static final int COMB_COOLDOWN = 5 * 60 * 20; // 5 minutes
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private long combedAt = -1;
+    private static final EntityDataAccessor<Long> COMBED_AT =
+            SynchedEntityData.defineId(BansheeEntity.class, EntityDataSerializers.LONG);
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(COMBED_AT, -1L);
+    }
 
     public BansheeEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
@@ -55,6 +65,7 @@ public class BansheeEntity extends PathfinderMob implements GeoEntity {
     }
 
     public boolean canBeCombed() {
+        long combedAt = this.entityData.get(COMBED_AT);
         return combedAt < 0 || level().getGameTime() - combedAt >= COMB_COOLDOWN;
     }
 
@@ -65,7 +76,7 @@ public class BansheeEntity extends PathfinderMob implements GeoEntity {
 
         if (level() instanceof ServerLevel serverLevel) {
             if (!canBeCombed()) return InteractionResult.PASS;
-            combedAt = serverLevel.getGameTime();
+            this.entityData.set(COMBED_AT, serverLevel.getGameTime());
             spawnAtLocation(new ItemStack(ModItems.BANSHEES_WISP.get(), 1 + random.nextInt(2)), 1.0F);
             stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             serverLevel.playSound(null, this, SoundEvents.SHEEP_SHEAR, SoundSource.NEUTRAL, 1.0F, 1.4F);
@@ -77,13 +88,13 @@ public class BansheeEntity extends PathfinderMob implements GeoEntity {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putLong("CombedAt", combedAt);
+        tag.putLong("CombedAt", this.entityData.get(COMBED_AT));
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        combedAt = tag.contains("CombedAt") ? tag.getLong("CombedAt") : -1;
+        this.entityData.set(COMBED_AT, tag.contains("CombedAt") ? tag.getLong("CombedAt") : -1L);
     }
 
     @Override

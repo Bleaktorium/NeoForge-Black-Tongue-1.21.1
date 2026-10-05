@@ -60,7 +60,7 @@ public class RitualEffects {
     private static void dropReward(Level level, BlockPos tablePos, ItemStack template, int count) {
         ItemEntity entity = new ItemEntity(level,
                 tablePos.getX() + 0.5, tablePos.getY() + 1.2, tablePos.getZ() + 0.5,
-                template.copyWithCount(count));
+                template.copyWithCount(template.getCount() * count));
         entity.setDeltaMovement(0, 0.2, 0);
         level.addFreshEntity(entity);
     }
