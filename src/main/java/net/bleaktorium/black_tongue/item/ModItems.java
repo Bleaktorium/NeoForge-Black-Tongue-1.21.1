@@ -140,7 +140,8 @@ public class ModItems {
     public static final DeferredItem<Item> BOOTS_LINING = ITEMS.registerSimpleItem("boots_lining", new Item.Properties());
     public static final DeferredItem<Item> SEED_OIL = ITEMS.registerSimpleItem("seed_oil", new Item.Properties());
     public static final DeferredItem<Item> HAUNTING_GLASS = ITEMS.registerSimpleItem("haunting_glass", new Item.Properties());
-    public static final DeferredItem<Item> GOLDEN_COMB = ITEMS.registerSimpleItem("golden_comb", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> GOLDEN_COMB = ITEMS.registerSimpleItem("golden_comb",
+            new Item.Properties().durability(64));
     public static final DeferredItem<Item> INFUSED_LEATHER = ITEMS.registerSimpleItem("infused_leather",
             new Item.Properties().component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true));
     public static final DeferredItem<Item> INFUSED_IRON_INGOT = ITEMS.registerSimpleItem("infused_iron_ingot",
