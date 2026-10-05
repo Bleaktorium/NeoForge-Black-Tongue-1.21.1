@@ -49,4 +49,8 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("embalming_table_be",
                     () -> BlockEntityType.Builder.of(EmbalmingTableBlockEntity::new, ModBlocks.EMBALMING_TABLE.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpinningWheelBlockEntity>> SPINNING_WHEEL_BE =
+            BLOCK_ENTITIES.register("spinning_wheel_be",
+                    () -> BlockEntityType.Builder.of(SpinningWheelBlockEntity::new, ModBlocks.SPINNING_WHEEL.get()).build(null));
+
 }

@@ -15,5 +15,6 @@ public class ModEntityAttributes {
         event.put(ModEntities.COVEN_HUT.get(), CovenHutEntity.createAttributes().build());
         event.put(ModEntities.COVEN_MOTHER_CAT.get(), CovenMotherCatEntity.createAttributes().build());
         event.put(ModEntities.PAGANKA_ROOT.get(), PagankaRootEntity.createAttributes().build());
+        event.put(ModEntities.HAUNTING_SOUL.get(), HauntingSoulEntity.createAttributes().build());
     }
 }

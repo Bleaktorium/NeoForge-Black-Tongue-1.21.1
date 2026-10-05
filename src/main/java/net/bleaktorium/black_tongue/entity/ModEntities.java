@@ -14,12 +14,12 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenMotherEntity>> COVEN_MOTHER =
             ENTITY_TYPES.register("coven_mother", () -> EntityType.Builder.of(CovenMotherEntity::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.95f) // width/height — placeholder
+                    .sized(0.6f, 1.95f)
                     .build("coven_mother"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenlessWitchEntity>> COVENLESS_WITCH =
             ENTITY_TYPES.register("covenless_witch", () -> EntityType.Builder.of(CovenlessWitchEntity::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.95f) // size placeholder
+                    .sized(0.6f, 1.95f)
                     .build("covenless_witch"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenHutEntity>> COVEN_HUT =
@@ -29,12 +29,12 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenMotherCatEntity>> COVEN_MOTHER_CAT =
             ENTITY_TYPES.register("coven_mother_cat", () -> EntityType.Builder.of(CovenMotherCatEntity::new, MobCategory.CREATURE)
-                    .sized(0.6f, 1.95f) // width/height — placeholder
+                    .sized(0.6f, 1.95f)
                     .build("coven_mother_cat"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<PagankaRootEntity>> PAGANKA_ROOT =
             ENTITY_TYPES.register("paganka_root", () -> EntityType.Builder.of(PagankaRootEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 0.6f) // placeholder — adjust once you can see the real model's size in-game
+                    .sized(0.5f, 0.6f)
                     .build("paganka_root"));
 
 

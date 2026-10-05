@@ -78,4 +78,8 @@ public class ModBlocks {
                     .sound(net.minecraft.world.level.block.SoundType.CROP)
                     .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY),
                     ModItems.DEVILS_COTTON_SEEDS));
+
+    public static final DeferredBlock<SpinningWheelBlock> SPINNING_WHEEL = BLOCKS.register("spinning_wheel",
+            () -> new SpinningWheelBlock(BlockBehaviour.Properties.of().strength(2.0f).noOcclusion()
+                    .sound(net.minecraft.world.level.block.SoundType.WOOD)));
 }

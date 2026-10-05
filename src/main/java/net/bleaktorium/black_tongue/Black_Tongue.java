@@ -37,6 +37,8 @@ import net.bleaktorium.black_tongue.entity.client.CovenHutRenderer;
 import net.bleaktorium.black_tongue.entity.client.CovenMotherCatRenderer;
 import net.bleaktorium.black_tongue.block.custom.DryingRackScreen;
 import net.bleaktorium.black_tongue.entity.client.PagankaRootRenderer;
+import net.bleaktorium.black_tongue.entity.ModEntities;
+import net.bleaktorium.black_tongue.entity.client.HauntingSoulRenderer;
 
 
 @Mod(Black_Tongue.MOD_ID)
@@ -113,6 +115,8 @@ public class Black_Tongue {
             event.registerEntityRenderer(ModEntities.PAGANKA_ROOT.get(), PagankaRootRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.ANCESTRAL_PILLAR_BE.get(), context -> new AncestralPillarRenderer());
             event.registerBlockEntityRenderer(ModBlockEntities.EMBALMING_TABLE_BE.get(), context -> new EmbalmingTableRenderer());
+            event.registerBlockEntityRenderer(ModBlockEntities.SPINNING_WHEEL_BE.get(), context -> new SpinningWheelRenderer());
+            event.registerEntityRenderer(ModEntities.HAUNTING_SOUL.get(), HauntingSoulRenderer::new);
         }
 
         @SubscribeEvent

@@ -9,6 +9,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -120,38 +121,36 @@ public class ModItems {
     public static final DeferredItem<ConsecratedRemainsItem> CONSECRATED_REMAINS = ITEMS.registerItem("consecrated_remains",
             ConsecratedRemainsItem::new, new Item.Properties().stacksTo(1));
 
-    // ARMOR CRAFTING: raw materials and threads
+    // ARMOR CRAFTING
     public static final DeferredItem<Item> BANSHEES_WISP = ITEMS.registerSimpleItem("banshees_wisp", new Item.Properties());
     public static final DeferredItem<Item> SPIDER_SILK_THREAD = ITEMS.registerSimpleItem("spider_silk_thread", new Item.Properties());
     public static final DeferredItem<Item> DEVILS_COTTON_THREAD = ITEMS.registerSimpleItem("devils_cotton_thread", new Item.Properties());
     public static final DeferredItem<Item> BANSHEES_WISP_THREAD = ITEMS.registerSimpleItem("banshees_wisp_thread", new Item.Properties());
     public static final DeferredItem<Item> WOOL_THREAD = ITEMS.registerSimpleItem("wool_thread", new Item.Properties());
-
-    // fabrics and rolls
     public static final DeferredItem<Item> SPIDER_SILK_FABRIC = ITEMS.registerSimpleItem("spider_silk_fabric", new Item.Properties());
     public static final DeferredItem<Item> DEVILS_COTTON_FABRIC = ITEMS.registerSimpleItem("devils_cotton_fabric", new Item.Properties());
     public static final DeferredItem<Item> BANSHEES_WISP_FABRIC = ITEMS.registerSimpleItem("banshees_wisp_fabric", new Item.Properties());
     public static final DeferredItem<Item> SILK_FABRIC_ROLL = ITEMS.registerSimpleItem("silk_fabric_roll", new Item.Properties());
     public static final DeferredItem<Item> COTTON_FABRIC_ROLL = ITEMS.registerSimpleItem("cotton_fabric_roll", new Item.Properties());
     public static final DeferredItem<Item> WISP_FABRIC_ROLL = ITEMS.registerSimpleItem("wisp_fabric_roll", new Item.Properties());
-
-    // linings
     public static final DeferredItem<Item> HELMET_LINING = ITEMS.registerSimpleItem("helmet_lining", new Item.Properties());
     public static final DeferredItem<Item> CHESTPLATE_LINING = ITEMS.registerSimpleItem("chestplate_lining", new Item.Properties());
     public static final DeferredItem<Item> LEGGINGS_LINING = ITEMS.registerSimpleItem("leggings_lining", new Item.Properties());
     public static final DeferredItem<Item> BOOTS_LINING = ITEMS.registerSimpleItem("boots_lining", new Item.Properties());
-
-    // other materials
     public static final DeferredItem<Item> SEED_OIL = ITEMS.registerSimpleItem("seed_oil", new Item.Properties());
     public static final DeferredItem<Item> HAUNTING_GLASS = ITEMS.registerSimpleItem("haunting_glass", new Item.Properties());
     public static final DeferredItem<Item> GOLDEN_COMB = ITEMS.registerSimpleItem("golden_comb", new Item.Properties().stacksTo(1));
-
-    // infused materials (glint so they don't look like the vanilla icons they borrow)
     public static final DeferredItem<Item> INFUSED_LEATHER = ITEMS.registerSimpleItem("infused_leather",
             new Item.Properties().component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true));
     public static final DeferredItem<Item> INFUSED_IRON_INGOT = ITEMS.registerSimpleItem("infused_iron_ingot",
             new Item.Properties().component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true));
     public static final DeferredItem<Item> INFUSED_DIAMOND = ITEMS.registerSimpleItem("infused_diamond",
             new Item.Properties().component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true));
+    public static final DeferredItem<BlockItem> SPINNING_WHEEL = ITEMS.registerSimpleBlockItem(
+            "spinning_wheel", ModBlocks.SPINNING_WHEEL);
+
+    // MOBS
+    public static final DeferredItem<DeferredSpawnEggItem> HAUNTING_SOUL_SPAWN_EGG = ITEMS.registerItem("haunting_soul_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntities.HAUNTING_SOUL, 0x1B1B2F, 0x8FD3FF, props));
 
 }

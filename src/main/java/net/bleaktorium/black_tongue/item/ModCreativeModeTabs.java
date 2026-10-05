@@ -74,6 +74,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.INFUSED_IRON_INGOT.get()); //infused
                         output.accept(ModItems.INFUSED_DIAMOND.get()); //infused
                         output.accept(ModItems.GOLDEN_COMB.get()); //tool
+                        output.accept(ModItems.SPINNING_WHEEL.get()); //station
+                        output.accept(ModItems.HAUNTING_SOUL_SPAWN_EGG.get()); //mob
 
                     })
                     .build());
