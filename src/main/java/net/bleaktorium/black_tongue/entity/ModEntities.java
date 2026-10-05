@@ -37,5 +37,8 @@ public class ModEntities {
                     .sized(0.5f, 0.6f)
                     .build("paganka_root"));
 
-
+    public static final DeferredHolder<EntityType<?>, EntityType<HauntingSoulEntity>> HAUNTING_SOUL =
+            ENTITY_TYPES.register("haunting_soul", () -> EntityType.Builder.of(HauntingSoulEntity::new, MobCategory.CREATURE)
+                    .sized(0.5f, 1.3f) // covers the floating head
+                    .build("haunting_soul"));
 }
