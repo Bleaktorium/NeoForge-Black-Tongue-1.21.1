@@ -76,6 +76,9 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.GOLDEN_COMB.get()); //tool
                         output.accept(ModItems.SPINNING_WHEEL.get()); //station
                         output.accept(ModItems.HAUNTING_SOUL_SPAWN_EGG.get()); //mob
+                        output.accept(ModItems.COVENLESS_WITCH_SPAWN_EGG.get()); //mob
+                        output.accept(ModItems.COVEN_HUT_SPAWN_EGG.get()); //mob
+                        output.accept(ModItems.COVEN_MOTHER_SPAWN_EGG.get()); //mob
 
                     })
                     .build());

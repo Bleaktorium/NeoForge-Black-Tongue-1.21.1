@@ -2,6 +2,7 @@ package net.bleaktorium.black_tongue.item;
 
 import net.bleaktorium.black_tongue.Black_Tongue;
 import net.bleaktorium.black_tongue.block.ModBlocks;
+import net.bleaktorium.black_tongue.entity.ModEntities;
 import net.bleaktorium.black_tongue.item.custom.*;
 import net.bleaktorium.black_tongue.remains.RemainsData;
 import net.minecraft.core.component.DataComponents;
@@ -152,5 +153,11 @@ public class ModItems {
     // MOBS
     public static final DeferredItem<DeferredSpawnEggItem> HAUNTING_SOUL_SPAWN_EGG = ITEMS.registerItem("haunting_soul_spawn_egg",
             props -> new DeferredSpawnEggItem(ModEntities.HAUNTING_SOUL, 0x1B1B2F, 0x8FD3FF, props));
+    public static final DeferredItem<DeferredSpawnEggItem> COVENLESS_WITCH_SPAWN_EGG = ITEMS.registerItem("covenless_witch_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntities.COVENLESS_WITCH, 0x3B2A4A, 0x7FA65A, props));
+    public static final DeferredItem<DeferredSpawnEggItem> COVEN_HUT_SPAWN_EGG = ITEMS.registerItem("coven_hut_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntities.COVEN_HUT, 0x5C4030, 0x6B7F3A, props));
+    public static final DeferredItem<DeferredSpawnEggItem> COVEN_MOTHER_SPAWN_EGG = ITEMS.registerItem("coven_mother_spawn_egg",
+            props -> new DeferredSpawnEggItem(ModEntities.COVEN_MOTHER, 0x1E1A1A, 0xD8CFB8, props));
 
 }
