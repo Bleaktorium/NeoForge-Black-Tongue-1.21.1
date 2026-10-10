@@ -3,6 +3,31 @@
 	"animations": {
 		"idle": {
 			"loop": true
+		},
+		"boiling": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"liquid": {
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0.1, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						},
+						"0.75": {
+							"vector": [0, 0.1, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
 		}
 	}
 }
